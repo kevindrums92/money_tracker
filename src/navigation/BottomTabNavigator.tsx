@@ -2,13 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import AddTransactionModal from '../components/AddTransaction/AddTransactionModal';
 
-import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { BottomTabParamList, HomeParamList, SettingsParamList } from '../types/types';
+import AddTransactionModal from '../components/AddTransaction/AddTransactionModal';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 

@@ -3,9 +3,9 @@ import * as React from 'react';
 import { TextInput, View, StyleSheet, TouchableOpacity, Text, Button } from 'react-native';
 import { useState } from 'react';
 import CustomDatePicker from '../CustomDatePicker';
-import { formatDate } from '../../../utils/date';
-import { toCamelCase } from '../../../utils/stringUtils';
 import { customInputStyles } from './Styles';
+import { toCamelCase } from '../../../utils/stringUtils';
+import { formatDate } from '../../../utils/date';
 
 interface DateInputProps {
     onChange: (...event: any[]) => void;

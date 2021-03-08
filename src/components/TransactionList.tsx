@@ -1,10 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { dummyData, Transaction } from '../types/transaction';
+import { dummyData, Transaction } from '../../src/types/transaction';
 import NumberFormat from 'react-number-format';
-import { groupArrayOfObjects } from '../utils/groupArrayOfObjects';
-import { formatDate } from '../utils/date';
+import { groupArrayOfObjects } from '../../src/utils/groupArrayOfObjects';
+import { formatDate } from '../../src/utils/date';
 
 
 interface TransactionListProps { }
