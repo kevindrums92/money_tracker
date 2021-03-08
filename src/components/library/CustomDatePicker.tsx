@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, Modal, TouchableOpacity, useColorScheme, ColorSchemeName } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useState } from 'react';
 import DismissKeyboard from './DismissKeyboard';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -33,7 +32,7 @@ const CustomDatePicker = (props: CustomDatePickerProps) => {
         textColor = DARK_COLOR;
     }
 
-    const onChange = (event: Event, date?: Date) => {
+    const onChange = (event: any, date?: Date) => {
         props.onChange(date);
       };
 

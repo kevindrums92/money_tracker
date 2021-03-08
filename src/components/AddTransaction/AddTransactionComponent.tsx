@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, TouchableWi
 import { Controller, useForm } from 'react-hook-form';
 import CustomButton from '../library/CustomButton';
 import CustomCurrencyInput from '../library/Input/CustomCurrencyInput';
-import CategoryInput from '../library/Input/CategoryInput';
+import CategoryInput from '../library/Input/category/CategoryInput';
 import NoteInput from '../library/Input/NoteInput';
 import DateInput from '../library/Input/DateInput';
 import moment from 'moment';
