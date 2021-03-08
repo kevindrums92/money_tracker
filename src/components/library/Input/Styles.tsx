@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const customInputStyles = StyleSheet.create({
     container: {
-        paddingVertical: 10,
+        paddingVertical: 20,
         borderTopWidth: 0.5,
         borderTopColor: '#303030',
         borderBottomWidth: 0.5,

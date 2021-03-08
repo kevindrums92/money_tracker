@@ -11,20 +11,21 @@ interface CategoryInputProps {
 
 const CategoryInput = (props: CategoryInputProps) => {
     return (
-        <View style={customInputStyles.container}>
-            <View style={customInputStyles.inputContainer}>
-                <TouchableOpacity style={{ ...styles.imageContainer, backgroundColor: 'gray' }} onPress={() => { }}>
-                    <MaterialCommunityIcons style={styles.image} name={'bag-personal'} size={20} color={"white"} />
-                </TouchableOpacity>
-                <TouchableOpacity style={customInputStyles.textInput} onPress={() => {
+        <TouchableOpacity style={customInputStyles.container}
+            onPress={() => {
 
-                }}>
+            }}>
+            <View style={customInputStyles.inputContainer}>
+                <View style={{ ...styles.imageContainer, backgroundColor: 'gray' }} >
+                    <MaterialCommunityIcons style={styles.image} name={'bag-personal'} size={20} color={"white"} />
+                </View>
+                <View style={customInputStyles.textInput} >
                     <Text style={{ ...customInputStyles.textInputText, color: 'silver' }}>Category</Text>
-                </TouchableOpacity>
+                </View>
             </View>
             {props.errorField}
 
-        </View>
+        </TouchableOpacity>
     );
 };
 
