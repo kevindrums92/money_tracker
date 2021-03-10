@@ -2,15 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as React from 'react';
-import { Text, View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Modal, TouchableOpacity, SectionList, FlatList } from 'react-native';
+import { Category } from '../../../../types/category';
+import CustomListViewControl from './CustomListViewControl';
 
 interface ModalCategorySelectorProps {
     visible: boolean;
     closeModal: () => void;
+    onChange: (category: Category) => void;
 }
 
 const ModalCategorySelector = (props: ModalCategorySelectorProps) => {
-    const { visible, closeModal } = props;
+    const { visible, closeModal, onChange } = props;
+
     return (
         <Modal
             animationType="fade"
@@ -27,11 +31,11 @@ const ModalCategorySelector = (props: ModalCategorySelectorProps) => {
                             <Ionicons style={styles.image} size={35} name="close" color={'white'} />
                         </TouchableOpacity>
                         <View style={styles.containerTitleHeader}>
-                            <Text style={styles.titleHeader}>CATEGORIES</Text>
+                            <Text style={styles.titleHeader}>CATEGORIAS</Text>
                         </View>
                     </View>
                     {/* Content */}
-
+                    <CustomListViewControl onChange={onChange} />
                 </View>
             </View>
         </Modal>
@@ -41,14 +45,12 @@ const ModalCategorySelector = (props: ModalCategorySelectorProps) => {
 export default ModalCategorySelector;
 
 const styles = StyleSheet.create({
-    container: {},
     centeredViewModal: {
         flex: 1,
     },
     modalView: {
         margin: 0,
         paddingVertical: Constants.statusBarHeight,
-        paddingHorizontal: 15,
         shadowColor: '#303030',
         shadowOffset: {
             width: 10,
@@ -61,6 +63,8 @@ const styles = StyleSheet.create({
     },
     containerHeader: {
         flexDirection: 'row',
+        paddingHorizontal: 15,
+        paddingBottom: 15
     },
     containerTitleHeader: {
         flex: 1,
@@ -82,4 +86,8 @@ const styles = StyleSheet.create({
         top: 0,
         height: "100%",
     },
+
+
 });
+
+
