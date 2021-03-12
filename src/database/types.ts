@@ -1,0 +1,1 @@
+export const TABLE_TRANSACTIONS = 'Self___Transactions';

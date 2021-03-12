@@ -28,7 +28,7 @@ export default function AddTransactionModal() {
                                 </View>
                             </View>
                             {/* Content */}
-                            <AddTransactionComponent />
+                            <AddTransactionComponent setModalVisible={setModalVisible}/>
                         </View>
                     </View>
                 </DismissKeyboard>

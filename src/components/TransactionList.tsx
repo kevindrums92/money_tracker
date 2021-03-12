@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import * as React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Transaction } from '../../src/types/transaction';
@@ -28,7 +28,7 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
                     return (
                         <View style={styles.container} key={key}>
                             <TouchableOpacity style={{ ...styles.imageContainer, backgroundColor: item.Category.Color }} onPress={() => { }}>
-                                <MaterialIcons style={styles.image} name={item.Category.Icon} size={20} color={"white"} />
+                                <FontAwesome5 style={styles.image} name={item.Category.Icon} size={16} color={"white"} />
                             </TouchableOpacity>
                             <View style={styles.content}>
                                 <View>
@@ -106,11 +106,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginLeft: 20,
         flexDirection: 'row',
+        justifyContent:'center'
     },
     image: {
         justifyContent: 'center',
         alignSelf: 'center',
-        marginLeft: 5,
+        
     },
     amount: {
         alignSelf: 'flex-end',

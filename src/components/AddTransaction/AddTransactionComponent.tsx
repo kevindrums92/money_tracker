@@ -6,21 +6,50 @@ import CustomCurrencyInput from '../library/Input/CustomCurrencyInput';
 import CategoryInput from '../library/Input/category/CategoryInput';
 import NoteInput from '../library/Input/NoteInput';
 import DateInput from '../library/Input/DateInput';
-import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Transaction } from '../../types/transaction';
+import { insertTransaction } from '../../database/transaction';
+import { useDispatch } from 'react-redux';
+import { getTransactions } from '../../store/transactions';
 
-interface AddTransactionComponentProps { }
+interface AddTransactionComponentProps {
+    setModalVisible: (state: boolean) => void
+}
 
 const AddTransactionComponent = (props: AddTransactionComponentProps) => {
-    const { register, setValue, handleSubmit, errors, formState, control } = useForm();
+    const { setModalVisible } = props;
+    const { handleSubmit, errors, control } = useForm();
+    const dispatch = useDispatch();
+    const [errorMessage, setErrorMessage] = React.useState("");
+    const [insertSuccessful, setinsertSuccessful] = React.useState(false);
 
-    const onSubmit = (data: any) => {
-        console.log(data);
+    const onSubmit = (data: Transaction) => {
+        const saveTransaction = async () => {
+            try {
+                await insertTransaction(data);
+                setinsertSuccessful(true);
+            } catch (error) {
+                console.log(error);
+                setErrorMessage("ha ocurrido un error");
+                setTimeout(function () { setErrorMessage("") }, 1000);
 
+            }
+        }
+        saveTransaction();
     }
+
+    React.useEffect(() => {
+        if (errorMessage) Alert.alert(errorMessage);
+    }, [errorMessage]);
+
+    React.useEffect(() => {
+        if (insertSuccessful) 
+        setModalVisible(false);
+        dispatch(getTransactions());
+    }, [insertSuccessful]);
+
     const errorTextField = (<Text style={styles.fieldRequired}>This is required.</Text>);
     const currentDate = new Date();
-    
+
     return (
         <View style={styles.container}>
             <View style={styles.containerForm}>
