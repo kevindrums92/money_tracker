@@ -1,10 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { dummyData, Transaction } from '../../src/types/transaction';
+import { Transaction } from '../../src/types/transaction';
 import NumberFormat from 'react-number-format';
 import { groupArrayOfObjects } from '../../src/utils/groupArrayOfObjects';
 import { formatDate } from '../../src/utils/date';
+import { RootState } from '../store';
+import { useSelector } from 'react-redux';
 
 
 interface TransactionListProps { }
@@ -18,7 +20,7 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
                     displayType='text'
                     value={balance}
                     thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
-                    renderText={(value) => <Text style={styles.amountHeader}>{`${balance> 0 ? "+": ""}${value}`}</Text>}
+                    renderText={(value) => <Text style={styles.amountHeader}>{`${balance > 0 ? "+" : ""}${value}`}</Text>}
                 />
             </View>
             <View style={styles.transactionContainer}>
@@ -57,8 +59,9 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
 }
 
 const TransactionList = (props: TransactionListProps) => {
-    dummyData.sort((a: Transaction, b: Transaction) => b.Date.getTime() - a.Date.getTime());
-    const groups = groupArrayOfObjects(dummyData, "Date");
+    const data = useSelector<RootState, Transaction[]>((state) => state.transactions.data);
+    
+    const groups = groupArrayOfObjects(data, "Date");
     const groupArrays = Object.keys(groups).map((key) => {
         const transactions = groups[key];
         const income = transactions.filter((i: Transaction) => i.Category.Type === 'income')
@@ -68,7 +71,7 @@ const TransactionList = (props: TransactionListProps) => {
         const balance = income - expenses;
 
         const date = formatDate(new Date(key));
-        
+
         return {
             date,
             transactions,
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
         color: 'silver',
         fontSize: 14,
         fontWeight: 'bold',
-        flex:1,
+        flex: 1,
     },
     amountHeader: {
         alignSelf: 'flex-end',

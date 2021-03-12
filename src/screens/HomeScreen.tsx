@@ -1,14 +1,22 @@
 
 import * as React from 'react';
-import { ScrollView, SectionList, Text, Image, TouchableOpacity } from 'react-native';
+import { useEffect } from 'react';
+import { ScrollView } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
 import DateSelector from '../components/DateSelector';
 
 import Overview from '../components/Overview';
 import { View } from '../components/Themed';
 import TransactionList from '../components/TransactionList';
+import { getTransactions } from '../store/transactions';
 
 export default function HomeScreen() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getTransactions());
+  }, []);
   return (
     <View
       style={styles.container}>

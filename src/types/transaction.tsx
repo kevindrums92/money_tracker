@@ -1,13 +1,13 @@
 import { Category } from "./category";
 
 export type Transaction = {
-    Category: Category;
+    Category: Category,
     Note?: string;
     Date: Date;
     Amount: number;
 };
 
-export const dummyData: Transaction[] = [
+export const dummyData = [
     {
         Category: { Name: 'loan', Icon: 'money', Color: 'orange', Group: 'housing', Type: 'expenses' },
         Date: new Date("2021/03/03"),
