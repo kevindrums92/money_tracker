@@ -3,10 +3,14 @@ import Constants from 'expo-constants';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Text, View, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 interface DateSelectorProps { }
 
 const DateSelector = (props: DateSelectorProps) => {
+    const transactionsLenght = useSelector<RootState, number>((state) => state.transactions.count);
+
     return (
         <View
             style={styles.container}>
@@ -21,7 +25,7 @@ const DateSelector = (props: DateSelectorProps) => {
                     <Text style={styles.date}>March 2021</Text>
                 </View>
                 <View>
-                    <Text style={styles.transactions}>4 TRANSACTIONS</Text>
+                    <Text style={styles.transactions}>{transactionsLenght} TRANSACTIONS</Text>
                 </View>
             </View>
             <TouchableOpacity style={{ ...styles.item, ...styles.itemArrow }}

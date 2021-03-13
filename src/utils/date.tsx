@@ -25,3 +25,6 @@ function isWithinAWeek(momentDate: Moment) {
 function isTwoWeeksOrMore(momentDate: Moment) {
     return !isWithinAWeek(momentDate);
 }
+
+export const startOfMonth = moment().clone().startOf('month').toDate();
+export const endOfMonth   = moment().clone().endOf('month').toDate();

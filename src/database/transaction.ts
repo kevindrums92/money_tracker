@@ -36,10 +36,9 @@ export const insertTransaction = (item: Transaction) => {
     });
 }
 
-export const getListTransactions = (): Promise<Array<any>> => {
+export const getListTransactions = (startDate:Date, endDate:Date): Promise<Array<any>> => {
     return new Promise((resolve, reject) => {
         const successCallback = (transaction: SQLTransaction, { rows }: any) => {
-            console.log(rows._array);
             resolve(rows._array);
         };
         const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
@@ -50,6 +49,7 @@ export const getListTransactions = (): Promise<Array<any>> => {
             SELECT 
             Mov.*
             FROM ${TABLE_TRANSACTIONS} as Mov
+            WHERE Date BETWEEN ${startDate.getTime()} AND ${endDate.getTime()}
             ORDER BY Date DESC;
         `;
         db.transaction((tx) => {
