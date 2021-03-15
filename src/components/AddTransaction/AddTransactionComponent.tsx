@@ -7,9 +7,10 @@ import CategoryInput from '../library/Input/category/CategoryInput';
 import NoteInput from '../library/Input/NoteInput';
 import DateInput from '../library/Input/DateInput';
 import { Transaction } from '../../types/transaction';
-import { insertTransaction } from '../../database/transaction';
-import { useDispatch } from 'react-redux';
-import { getTransactions } from '../../store/transactions';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTransactions, insertTransaction, TransactionSlice } from '../../store/transactions';
+import CustomPicker from '../library/Input/CustomPicker/CustomPicker';
+import { RootState } from '../../store';
 
 interface AddTransactionComponentProps {
     setModalVisible: (state: boolean) => void
@@ -17,24 +18,12 @@ interface AddTransactionComponentProps {
 
 const AddTransactionComponent = (props: AddTransactionComponentProps) => {
     const { setModalVisible } = props;
-    const { handleSubmit, errors, control } = useForm();
+    const { handleSubmit, errors, control, getValues } = useForm();
     const dispatch = useDispatch();
-    const [errorMessage, setErrorMessage] = React.useState("");
-    const [insertSuccessful, setinsertSuccessful] = React.useState(false);
+    const { itemInserted, errorMessage } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
 
     const onSubmit = (data: Transaction) => {
-        const saveTransaction = async () => {
-            try {
-                await insertTransaction(data);
-                setinsertSuccessful(true);
-            } catch (error) {
-                console.log(error);
-                setErrorMessage("ha ocurrido un error");
-                setTimeout(function () { setErrorMessage("") }, 1000);
-
-            }
-        }
-        saveTransaction();
+        dispatch(insertTransaction(data));
     }
 
     React.useEffect(() => {
@@ -42,12 +31,12 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
     }, [errorMessage]);
 
     React.useEffect(() => {
-        if (insertSuccessful) 
-        setModalVisible(false);
+        if (itemInserted)
+            setModalVisible(false);
         dispatch(getTransactions());
-    }, [insertSuccessful]);
+    }, [itemInserted]);
 
-    const errorTextField = (<Text style={styles.fieldRequired}>This is required.</Text>);
+    const errorTextField = (<Text style={styles.fieldRequired}>Campo requerido</Text>);
     const currentDate = new Date();
 
     return (
@@ -80,7 +69,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
                     )}
                     name="Note"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: false }}
                     defaultValue={null}
                 />
 
@@ -92,6 +81,16 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
                     control={control}
                     rules={{ required: true }}
                     defaultValue={currentDate}
+                />
+
+                <Controller
+                    render={({ value, onChange }) => (
+                        <CustomPicker value={value} onChange={onChange} errorField={<></>}
+                            selectedDate={getValues().Date} />
+                    )}
+                    name="Recurrency"
+                    control={control}
+                    defaultValue={"none"}
                 />
             </View>
 

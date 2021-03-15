@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment';
-import { getListTransactions } from '../database/transaction';
+import { getListTransactions, insertTransactionDB, setScheduledFalseTransactionDB } from '../database/transaction';
 import { Transaction } from '../types/transaction';
-import { endOfMonth, startOfMonth } from '../utils/date';
-import { getTransactionListExpenses, getTransactionListIncome } from '../utils/transactionUtils';
+import { buildNextValidDate, endOfMonth, startOfMonth } from '../utils/date';
+import { getNewDateTransactionRecurrency, getTransactionListExpenses, getTransactionListIncome } from '../utils/transactionUtils';
 
 type FilterPeriod = "Monthly" | "Weekly" | "Yearly";
 export interface TransactionFiltersSlice {
@@ -18,6 +18,10 @@ export interface TransactionSlice {
     income: number,
     expenses: number,
     balance: number,
+    itemInserted: boolean,
+    errorMessage: string,
+    itemUpdated: boolean,
+    loading: boolean
 }
 
 const initialState: TransactionSlice = {
@@ -30,7 +34,11 @@ const initialState: TransactionSlice = {
     },
     income: 0,
     expenses: 0,
-    balance: 0
+    balance: 0,
+    itemInserted: false,
+    errorMessage: "",
+    itemUpdated: false,
+    loading: false
 }
 
 // Slice
@@ -51,13 +59,29 @@ const slice = createSlice({
             balance: action.payload.balance,
             income: action.payload.income,
             expenses: action.payload.expenses
-        })
+        }),
+        setItemInserted: (state, action) => ({
+            ...state,
+            itemInserted: action.payload
+        }),
+        setItemUpdated: (state, action) => ({
+            ...state,
+            itemUpdated: action.payload
+        }),
+        setErrorMessage: (state, action) => ({
+            ...state,
+            errorMessage: action.payload
+        }),
+        setLoading: (state, action) => ({
+            ...state,
+            loading: action.payload
+        }),
     },
 });
 export default slice.reducer;
 
 // Action
-const { setTransactions, setFilters, setOverviewBalance } = slice.actions;
+const { setTransactions, setFilters, setOverviewBalance, setItemInserted, setErrorMessage, setItemUpdated, setLoading } = slice.actions;
 export const getTransactions = () => async (dispatch: any, getState: any) => {
     try {
         const filters = getState().transactions.filters;
@@ -66,17 +90,21 @@ export const getTransactions = () => async (dispatch: any, getState: any) => {
 
         const data = transactions.map(item => {
             const res: Transaction = {
+                Id: item.Id,
                 Category: {
                     Icon: item.CategoryIcon,
                     Color: item.CategoryColor,
                     Name: item.CategoryName,
                     Group: item.CategoryGroup,
-                    Type: item.CategoryType
+                    Type: item.CategoryType,
                 },
                 Date: new Date(new Date(item.Date).toDateString()),
                 Amount: item.Amount,
-                Note: item.Note
+                Note: item.Note,
+                Recurrency: item.Recurrency,
+                Scheduled: item.Scheduled === 1 ? true : false
             };
+
             return res;
         });
         const income = getTransactionListIncome(data);
@@ -111,5 +139,76 @@ export const changePeriod = (forward: boolean) => async (dispatch: any, getState
         }
     } catch (e) {
         return console.error(e.message);
+    }
+}
+
+export const insertTransaction = (item: Transaction) => async (dispatch: any, getState: any) => {
+    try {
+        dispatch(setLoading(true));
+        const res = await insertTransactionDB(item);
+
+        if (res) {
+            if (item.Recurrency !== "none") {
+                const newItemtoInsert = {...item};
+                const transactionDate = moment(newItemtoInsert.Date);
+                newItemtoInsert.Scheduled = true;
+                newItemtoInsert.Date = getNewDateTransactionRecurrency(newItemtoInsert.Recurrency, transactionDate);
+                const resRecurrency = await insertTransactionDB(newItemtoInsert);
+                if (resRecurrency) {
+                    dispatch(setItemInserted(true));
+                    setTimeout(function () {
+                        dispatch(setItemInserted(false));
+                    }, 1000);
+                }
+            } else {
+                dispatch(setItemInserted(true));
+                setTimeout(function () {
+                    dispatch(setItemInserted(false));
+                }, 1000);
+            }
+            dispatch(setLoading(false));
+        }
+    } catch (e) {
+        if (e.message) {
+            dispatch(setErrorMessage(e.message));
+            setTimeout(function () {
+                dispatch(setErrorMessage(""));
+            }, 1000);
+        }
+        dispatch(setLoading(false));
+        return console.error(e);
+    }
+}
+
+export const addTransactionScheduledNow = (item: Transaction) => async (dispatch: any, getState: any) => {
+    try {
+        dispatch(setLoading(true));
+        const res = await setScheduledFalseTransactionDB(item);
+
+        if (res) {
+            const newItemtoInsert = { ...item, Id: undefined };
+            const transactionDate = moment(newItemtoInsert.Date);
+            newItemtoInsert.Scheduled = true;
+            newItemtoInsert.Date = getNewDateTransactionRecurrency(newItemtoInsert.Recurrency, transactionDate);
+
+            const resRecurrency = await insertTransactionDB(newItemtoInsert);
+            if (resRecurrency) {
+                dispatch(setItemUpdated(true));
+                setTimeout(function () {
+                    dispatch(setItemUpdated(false));
+                }, 100);
+            }
+            dispatch(setLoading(false));
+        }
+    } catch (e) {
+        if (e.message) {
+            dispatch(setErrorMessage(e.message));
+            setTimeout(function () {
+                dispatch(setErrorMessage(""));
+            }, 1000);
+        }
+        dispatch(setLoading(false));
+
+        return console.error(e);
     }
 }

@@ -39,3 +39,17 @@ export const endOfMonth = (month: number = getCurrentMonth, year: number = getCu
     return endDate;
 }
 
+export const buildNextValidDate = (date:Date):Date =>{
+    let dayIncrement = 1;
+  
+    if (moment(date).day() === 5) {
+      // set to monday
+      dayIncrement = 3;
+    } else if (moment(date).day() === 6) {
+      // set to monday
+      dayIncrement = 2;
+    }
+  
+    return moment(date).add(dayIncrement, 'd').toDate();
+  }
+

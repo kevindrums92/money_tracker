@@ -3,29 +3,45 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DateSelector from '../components/DateSelector';
 
 import Overview from '../components/Overview';
 import { View } from '../components/Themed';
 import TransactionList from '../components/TransactionList';
-import { getTransactions } from '../store/transactions';
+import { RootState } from '../store';
+import { getTransactions, TransactionSlice } from '../store/transactions';
 
 export default function HomeScreen() {
   const dispatch = useDispatch();
+  const { itemUpdated,
+    data,
+    loading,
+    count,
+    filters,
+    balance,
+    income,
+    expenses
+  } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
 
   useEffect(() => {
     dispatch(getTransactions());
   }, []);
+
+  useEffect(() => {
+    if (itemUpdated)
+      dispatch(getTransactions());
+  }, [itemUpdated]);
   return (
     <View
       style={styles.container}>
-      <ScrollView style={styles.scrollView} alwaysBounceVertical={false} keyboardShouldPersistTaps={'never'}>
+      <ScrollView style={styles.scrollView} alwaysBounceVertical={false} keyboardShouldPersistTaps={'never'}
+      >
         <View style={styles.overview} >
-          <Overview />
+          <Overview balance={balance} income={income} expenses={expenses}/>
         </View>
-        <DateSelector />
-        <TransactionList />
+        <DateSelector count={count} filters={filters} />
+        <TransactionList data={data} loading={loading} />
       </ScrollView>
     </View>
   );

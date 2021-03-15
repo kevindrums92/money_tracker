@@ -3,14 +3,16 @@ import moment from 'moment';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Text, View, StyleSheet } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { changePeriod, TransactionSlice } from '../store/transactions';
+import { useDispatch } from 'react-redux';
+import { changePeriod, TransactionFiltersSlice } from '../store/transactions';
 
-interface DateSelectorProps { }
+interface DateSelectorProps { 
+    count: number,
+    filters: TransactionFiltersSlice
+}
 
 const DateSelector = (props: DateSelectorProps) => {
-    const { count, filters } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
+    const { count, filters } = props;
     const dispatch = useDispatch();
     return (
         <View
@@ -26,7 +28,7 @@ const DateSelector = (props: DateSelectorProps) => {
                     <Text style={styles.date}>{moment(filters.startDate).format("MMMM YYYY")}</Text>
                 </View>
                 <View>
-                    <Text style={styles.transactions}>{count} TRANSACTIONS</Text>
+                    <Text style={styles.transactions}>{count} TRANSACCIONES</Text>
                 </View>
             </View>
             <TouchableOpacity style={{ ...styles.item, ...styles.itemArrow }}

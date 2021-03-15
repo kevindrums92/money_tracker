@@ -5,14 +5,110 @@ import { Transaction } from '../../src/types/transaction';
 import NumberFormat from 'react-number-format';
 import { groupArrayOfObjects } from '../../src/utils/groupArrayOfObjects';
 import { formatDate } from '../../src/utils/date';
-import { RootState } from '../store';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getTransactionListExpenses, getTransactionListIncome } from '../utils/transactionUtils';
+import CustomButton from './library/CustomButton';
+import { toCamelCase } from '../utils/stringUtils';
+import { addTransactionScheduledNow } from '../store/transactions';
 
 
-interface TransactionListProps { }
+interface TransactionListProps {
+    data: Transaction[],
+    loading: boolean,
+}
 
-const renderSection = (transactions: Transaction[], dateText: string, balance: number, key: number) => {
+const renderTransactionItem = (item: Transaction) => {
+    return <>
+        <TouchableOpacity style={{ ...styles.imageContainer, backgroundColor: item.Category.Color }} onPress={() => { }}>
+            <FontAwesome5 style={styles.image} name={item.Category.Icon} size={16} color={"white"} />
+        </TouchableOpacity>
+        <View style={styles.content}>
+            <View>
+                <Text style={styles.name}>{(item.Note ? item.Note : item.Category.Name)}</Text>
+            </View>
+        </View>
+        <NumberFormat
+            displayType='text'
+            value={item.Amount}
+            thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
+            renderText={(value) => {
+                let stylestoApply = styles.amount;
+                if (item.Category.Type === 'income') {
+                    stylestoApply = {
+                        ...stylestoApply,
+                        ...styles.colorIncome
+                    };
+                }
+                return <Text style={stylestoApply}>{value}</Text>
+            }}
+        />
+    </>;
+}
+
+const renderTransactionItemScheduled = (item: Transaction, loading: boolean) => {
+    const dispatch = useDispatch();
+
+    const opacityColor = 'dimgray';
+    return <>
+        <TouchableOpacity style={{
+            ...styles.imageContainer,
+            backgroundColor: item.Category.Color,
+            opacity: 0.6
+        }} onPress={() => { }}>
+            <FontAwesome5 style={{
+                ...styles.image,
+                opacity: 0.6
+            }} name={item.Category.Icon} size={16} color={opacityColor} />
+        </TouchableOpacity>
+        <View style={styles.content}>
+            <View style={{
+                flexDirection: 'row',
+            }}>
+                <FontAwesome5 style={styles.image} name="calendar-alt" size={14} color={opacityColor} />
+                <View style={{
+                    justifyContent: 'center'
+                }}>
+                    <Text style={{
+                        color: 'silver',
+                        fontWeight: 'bold',
+                        marginLeft: 3,
+                        marginRight: 5
+                    }}>AGENDADO</Text>
+                </View>
+                <NumberFormat
+                    displayType='text'
+                    value={item.Amount}
+                    thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
+                    renderText={(value) => {
+                        return <Text style={{
+                            ...styles.amount,
+                            fontSize: 16,
+                            color: opacityColor
+                        }}>{value}</Text>
+                    }}
+                />
+            </View>
+
+            <View>
+                <Text style={{
+                    ...styles.name,
+                    color: opacityColor,
+                }}>{toCamelCase(item.Category.Name)}</Text>
+                <Text style={{
+                    ...styles.name,
+                    color: opacityColor
+                }}>{(item.Note ? item.Note : item.Category.Name)}</Text>
+            </View>
+        </View>
+        {!loading && (<CustomButton style={{
+            marginEnd: 10
+        }} onPress={() => {
+            dispatch(addTransactionScheduledNow(item));
+        }} title="Añadir ya" type="flat" fontSize={12} color={'silver'} icon="plus" loading={loading} />)}
+    </>;
+}
+
+const renderSection = (transactions: Transaction[], dateText: string, balance: number, key: number, loading: boolean) => {
     return (
         <React.Fragment key={key}>
             <View style={styles.sectionHeader}>
@@ -28,29 +124,8 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
                 {transactions.map((item: Transaction, key: number) => {
                     return (
                         <View style={styles.container} key={key}>
-                            <TouchableOpacity style={{ ...styles.imageContainer, backgroundColor: item.Category.Color }} onPress={() => { }}>
-                                <FontAwesome5 style={styles.image} name={item.Category.Icon} size={16} color={"white"} />
-                            </TouchableOpacity>
-                            <View style={styles.content}>
-                                <View>
-                                    <Text style={styles.name}>{(item.Note ? item.Note : item.Category.Name)}</Text>
-                                </View>
-                            </View>
-                            <NumberFormat
-                                displayType='text'
-                                value={item.Amount}
-                                thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
-                                renderText={(value) => {
-                                    let stylestoApply = styles.amount;
-                                    if (item.Category.Type === 'income') {
-                                        stylestoApply = {
-                                            ...stylestoApply,
-                                            ...styles.colorIncome
-                                        };
-                                    }
-                                    return <Text style={stylestoApply}>{value}</Text>
-                                }}
-                            />
+                            {!item.Scheduled && renderTransactionItem(item)}
+                            {item.Scheduled && renderTransactionItemScheduled(item, loading)}
                         </View>
                     );
                 })}
@@ -60,8 +135,7 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
 }
 
 const TransactionList = (props: TransactionListProps) => {
-    const data = useSelector<RootState, Transaction[]>((state) => state.transactions.data);
-    
+    const { data, loading } = props;
     const groups = groupArrayOfObjects(data, "Date");
     const groupArrays = Object.keys(groups).map((key) => {
         const transactions = groups[key];
@@ -79,7 +153,7 @@ const TransactionList = (props: TransactionListProps) => {
     });
     return <>
         {groupArrays.map((item, index) => {
-            return renderSection(item.transactions, item.date, item.balance, index);
+            return renderSection(item.transactions, item.date, item.balance, index, loading);
         })}
     </>;
 };
@@ -105,12 +179,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginLeft: 20,
         flexDirection: 'row',
-        justifyContent:'center'
+        justifyContent: 'center',
+        opacity: 1
     },
     image: {
         justifyContent: 'center',
         alignSelf: 'center',
-        
+        opacity: 1
     },
     amount: {
         alignSelf: 'flex-end',

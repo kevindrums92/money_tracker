@@ -3,14 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import NumberFormat from 'react-number-format';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { TransactionSlice } from '../store/transactions';
 
-interface OverviewProps { }
+interface OverviewProps { 
+  balance:number, income:number, expenses:number
+}
 
 const Overview = (props: OverviewProps) => {
-  const { balance, income, expenses } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
+  const { balance, income, expenses } = props;
 
   return (
     <View style={styles.container}>
@@ -32,7 +31,7 @@ const Overview = (props: OverviewProps) => {
           </Text>
         </View>
         <View>
-          <Text style={styles.overviewLabel}>INCOME</Text>
+          <Text style={styles.overviewLabel}>INGRESOS</Text>
         </View>
       </View>
       <View style={styles.item}>
@@ -49,7 +48,7 @@ const Overview = (props: OverviewProps) => {
           </Text>
         </View>
         <View>
-          <Text style={styles.overviewLabel}>EXPENSES</Text>
+          <Text style={styles.overviewLabel}>GASTOS</Text>
         </View>
       </View>
       <View style={styles.item}>
