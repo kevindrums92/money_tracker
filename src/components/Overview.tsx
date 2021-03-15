@@ -1,11 +1,17 @@
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as React from 'react';
-import { Text, View, StyleSheet, SafeAreaView } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import NumberFormat from 'react-number-format';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { TransactionSlice } from '../store/transactions';
 
 interface OverviewProps { }
 
 const Overview = (props: OverviewProps) => {
+  const { balance, income, expenses } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -14,7 +20,16 @@ const Overview = (props: OverviewProps) => {
       />
       <View style={styles.item}>
         <View>
-          <Text style={styles.overviewValue}>$1.000.000</Text>
+          <Text style={styles.overviewValue}>
+            <NumberFormat
+              displayType='text'
+              value={income}
+              thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
+              renderText={(value) => {
+                return <Text>{value}</Text>
+              }}
+            />
+          </Text>
         </View>
         <View>
           <Text style={styles.overviewLabel}>INCOME</Text>
@@ -22,7 +37,16 @@ const Overview = (props: OverviewProps) => {
       </View>
       <View style={styles.item}>
         <View>
-          <Text style={styles.overviewValue}>$200.000</Text>
+          <Text style={styles.overviewValue}>
+            <NumberFormat
+              displayType='text'
+              value={expenses}
+              thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
+              renderText={(value) => {
+                return <Text>{value}</Text>
+              }}
+            />
+          </Text>
         </View>
         <View>
           <Text style={styles.overviewLabel}>EXPENSES</Text>
@@ -30,7 +54,16 @@ const Overview = (props: OverviewProps) => {
       </View>
       <View style={styles.item}>
         <View>
-          <Text style={styles.overviewValue}>$800.000</Text>
+          <Text style={styles.overviewValue}>
+            <NumberFormat
+              displayType='text'
+              value={balance}
+              thousandSeparator={'.'} decimalSeparator={','} prefix={'$'}
+              renderText={(value) => {
+                return <Text>{value}</Text>
+              }}
+            />
+          </Text>
         </View>
         <View>
           <Text style={styles.overviewLabel}>BALANCE</Text>

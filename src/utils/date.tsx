@@ -2,8 +2,8 @@ import moment, { Moment } from "moment";
 
 export function formatDate(date: Date) {
     const momentDate = moment(date);
-    if(isToday(momentDate)) return "TODAY";
-    if(isYesterday(momentDate)) return "YESTERDAY";
+    if (isToday(momentDate)) return "TODAY";
+    if (isYesterday(momentDate)) return "YESTERDAY";
 
     return moment(date).format("dddd, DD MMM");
 };
@@ -26,5 +26,16 @@ function isTwoWeeksOrMore(momentDate: Moment) {
     return !isWithinAWeek(momentDate);
 }
 
-export const startOfMonth = moment().clone().startOf('month').toDate();
-export const endOfMonth   = moment().clone().endOf('month').toDate();
+const getCurrentMonth = new Date().getMonth() + 1;
+const getCurrentYear = new Date().getFullYear();
+
+export const startOfMonth = (month: number = getCurrentMonth, year: number = getCurrentYear) => {
+    const startDate = moment([year, month - 1]).toDate();
+    return startDate;
+}
+export const endOfMonth = (month: number = getCurrentMonth, year: number = getCurrentYear) => {
+    const startDate = moment([year, month - 1]);
+    const endDate = moment(startDate).endOf('month').toDate();
+    return endDate;
+}
+

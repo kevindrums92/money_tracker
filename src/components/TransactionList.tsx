@@ -7,6 +7,7 @@ import { groupArrayOfObjects } from '../../src/utils/groupArrayOfObjects';
 import { formatDate } from '../../src/utils/date';
 import { RootState } from '../store';
 import { useSelector } from 'react-redux';
+import { getTransactionListExpenses, getTransactionListIncome } from '../utils/transactionUtils';
 
 
 interface TransactionListProps { }
@@ -64,10 +65,8 @@ const TransactionList = (props: TransactionListProps) => {
     const groups = groupArrayOfObjects(data, "Date");
     const groupArrays = Object.keys(groups).map((key) => {
         const transactions = groups[key];
-        const income = transactions.filter((i: Transaction) => i.Category.Type === 'income')
-            .reduce((sum: number, current: Transaction) => sum + current.Amount, 0);
-        const expenses = transactions.filter((i: Transaction) => i.Category.Type === 'expenses')
-            .reduce((sum: number, current: Transaction) => sum + current.Amount, 0);
+        const income = getTransactionListIncome(transactions);
+        const expenses = getTransactionListExpenses(transactions);
         const balance = income - expenses;
 
         const date = formatDate(new Date(key));
