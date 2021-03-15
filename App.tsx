@@ -9,14 +9,18 @@ import AppLoading from 'expo-app-loading';
 import { Provider } from 'react-redux';
 import store from './src/store';
 import { initDB } from './src/database/connector';
+import * as Location from 'expo-location';
+
+import { bgtask, registerScheduledBackgroundTask } from './src/backgroundTasks/scheduledBackgroundFetch';
 
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
   const [dbLoaded, setDbLoaded] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(()=>{
+  useEffect(() => {
     async function _initDB() {
       try {
         await initDB();
@@ -27,6 +31,17 @@ export default function App() {
       }
     }
     _initDB();
+
+    // (async () => {
+    //   let { status } = await Location.requestPermissionsAsync();
+    //   if (status !== 'granted') {
+    //     setErrorMsg('Permission to access location was denied');
+    //     return;
+    //   }
+    //   registerScheduledBackgroundTask();
+    //   bgtask();
+    // })();
+    registerScheduledBackgroundTask();
   });
 
   if (!isLoadingComplete || !dbLoaded) {

@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment';
 import { getListTransactions, insertTransactionDB, setScheduledFalseTransactionDB } from '../database/transaction';
 import { Transaction } from '../types/transaction';
-import { buildNextValidDate, endOfMonth, startOfMonth } from '../utils/date';
-import { getNewDateTransactionRecurrency, getTransactionListExpenses, getTransactionListIncome } from '../utils/transactionUtils';
+import { endOfMonth, startOfMonth } from '../utils/date';
+import { getNewDateTransactionRecurrency, getTransactionListExpenses, getTransactionListIncome, parseTransactionData } from '../utils/transactionUtils';
 
 type FilterPeriod = "Monthly" | "Weekly" | "Yearly";
 export interface TransactionFiltersSlice {
@@ -88,25 +88,7 @@ export const getTransactions = () => async (dispatch: any, getState: any) => {
 
         const transactions = await getListTransactions(filters.startDate, filters.endDate);
 
-        const data = transactions.map(item => {
-            const res: Transaction = {
-                Id: item.Id,
-                Category: {
-                    Icon: item.CategoryIcon,
-                    Color: item.CategoryColor,
-                    Name: item.CategoryName,
-                    Group: item.CategoryGroup,
-                    Type: item.CategoryType,
-                },
-                Date: new Date(new Date(item.Date).toDateString()),
-                Amount: item.Amount,
-                Note: item.Note,
-                Recurrency: item.Recurrency,
-                Scheduled: item.Scheduled === 1 ? true : false
-            };
-
-            return res;
-        });
+        const data = parseTransactionData(transactions);
         const income = getTransactionListIncome(data);
         const expenses = getTransactionListExpenses(data);
         const balance = income - expenses;

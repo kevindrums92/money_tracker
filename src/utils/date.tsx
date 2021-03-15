@@ -26,8 +26,9 @@ function isTwoWeeksOrMore(momentDate: Moment) {
     return !isWithinAWeek(momentDate);
 }
 
-const getCurrentMonth = new Date().getMonth() + 1;
-const getCurrentYear = new Date().getFullYear();
+export const getCurrentMonth = new Date().getMonth() + 1;
+export const getCurrentYear = new Date().getFullYear();
+export const getCurrentDay = new Date().getDate();
 
 export const startOfMonth = (month: number = getCurrentMonth, year: number = getCurrentYear) => {
     const startDate = moment([year, month - 1]).toDate();

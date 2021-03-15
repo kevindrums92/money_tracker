@@ -3744,6 +3744,13 @@ expo-asset@~8.2.1:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
+expo-background-fetch@~8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/expo-background-fetch/-/expo-background-fetch-8.6.0.tgz#c2a3fcf3a73fa04567deebfd2ad236d55c42c708"
+  integrity sha512-kTbSLOWv2Ja6p+lk54OYFZhZN7kZZQxPSMPb/x0jg5mtJZdBqmIyzmrOURtQOcKpJmFibSn3lWxUFdg+2y0Qew==
+  dependencies:
+    expo-task-manager "~8.6.0"
+
 expo-constants@~9.3.3:
   version "9.3.5"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-9.3.5.tgz#78085763e8ed100a5f2df7c682fd99631aa03d5e"
@@ -3829,6 +3836,13 @@ expo-status-bar@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.0.3.tgz#62b4d6145680abd43ba6ecfa465f835e88bf6263"
   integrity sha512-/Orgla1nkIrfswNHbuAOTbPVq0g3+GrhoQVk7MRafY2dwrFLgXhaPExS+eN2hpmzqPv2LG5cqAZDCQUAjmZYBQ==
+
+expo-task-manager@~8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/expo-task-manager/-/expo-task-manager-8.6.0.tgz#615f57904f37d0beb024f513c715a0cdc6a2b50a"
+  integrity sha512-iyspQYN97KNxTgR7MEuqALxYQgefC9f/wacrZmtDKiXfJYBhcFeFjQiUMih/UZqJSfeIrp1zX3xrGSrM0Gub/w==
+  dependencies:
+    unimodules-app-loader "~1.4.0"
 
 expo-web-browser@~8.6.0:
   version "8.6.0"
@@ -6761,6 +6775,11 @@ pngjs@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-5.0.0.tgz#e79dd2b215767fd9c04561c01236df960bce7fbb"
   integrity sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==
+
+pod-install@^0.1.18:
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/pod-install/-/pod-install-0.1.18.tgz#849ca44fd0be6d26da00b0664c6986eaaa08f7da"
+  integrity sha512-67du/MXloYatvOCgiV4RZXmg1nW887TdrwVTfZPVWMhmzRefzo3Mkw8lNYmbqN8WUlXtstaKn0l5DFDPfsDMLw==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

@@ -12,7 +12,7 @@ export const insertTransactionDB = (item: Transaction): Promise<boolean> => {
             reject(error);
             return true;
         }
-        
+
         const sql = `
             INSERT INTO ${TABLE_TRANSACTIONS} 
             (
@@ -53,6 +53,28 @@ export const setScheduledFalseTransactionDB = (item: Transaction): Promise<boole
                 SET Scheduled = 0
                 WHERE Id = ${item.Id}
         `;
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql, undefined, successCallback, errorCallback
+            );
+        });
+    });
+}
+
+export const getScheduledTransactionsReadytoAdd = (date: number): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const successCallback = (transaction: SQLTransaction, { rows }: any) => {
+            resolve(rows._array);
+        };
+        const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
+            reject(error);
+            return true;
+        }
+        const sql = `
+            SELECT * FROM ${TABLE_TRANSACTIONS} 
+                WHERE Date < ${date} AND Scheduled = 1
+        `;
+
         db.transaction((tx) => {
             tx.executeSql(
                 sql, undefined, successCallback, errorCallback
