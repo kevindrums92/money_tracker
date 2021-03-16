@@ -12,4 +12,5 @@ export type Transaction = {
     Amount: number;
     Recurrency: TransactionRecurrency;
     Scheduled: boolean;
+    ShouldNotify: boolean;
 };

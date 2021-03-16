@@ -83,7 +83,8 @@ export const parseTransactionData = (data: any):Transaction[] => {
             Amount: item.Amount,
             Note: item.Note,
             Recurrency: item.Recurrency,
-            Scheduled: item.Scheduled === 1 ? true : false
+            Scheduled: item.Scheduled === 1 ? true : false,
+            ShouldNotify: item.ShouldNotify === 1 ? true : false
         };
 
         return res;

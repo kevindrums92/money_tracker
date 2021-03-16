@@ -5,6 +5,7 @@ import moment from 'moment';
 import { getCurrentDay, getCurrentMonth, getCurrentYear } from '../utils/date';
 import { getScheduledTransactionsReadytoAdd, insertTransactionDB, setScheduledFalseTransactionDB } from '../database/transaction';
 import { getNewDateTransactionRecurrency, parseTransactionData } from '../utils/transactionUtils';
+import { setNotification } from './notificationHub';
 
 const TASKNAME = "scheduled-background-fetch";
 const INTERVAL = 60 * 60;
@@ -12,7 +13,7 @@ const INTERVAL = 60 * 60;
 export const bgtask = async () => {
     try {
         const today24h = moment([getCurrentYear, getCurrentMonth - 1, getCurrentDay]).add(1, 'd').toDate();
-
+        
         const trans = await getScheduledTransactionsReadytoAdd(today24h.getTime());
         const data = parseTransactionData(trans);
         data.forEach(async item => {
@@ -24,7 +25,8 @@ export const bgtask = async () => {
                 newItemtoInsert.Scheduled = true;
                 newItemtoInsert.Date = getNewDateTransactionRecurrency(newItemtoInsert.Recurrency, transactionDate);
 
-                await insertTransactionDB(newItemtoInsert);
+                const id = await insertTransactionDB(newItemtoInsert);
+                setNotification({...newItemtoInsert, Id:id});
             }
         });
 

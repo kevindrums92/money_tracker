@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment';
+import { setNotification } from '../backgroundTasks/notificationHub';
 import { getListTransactions, insertTransactionDB, setScheduledFalseTransactionDB } from '../database/transaction';
 import { Transaction } from '../types/transaction';
 import { endOfMonth, startOfMonth } from '../utils/date';
@@ -131,12 +132,14 @@ export const insertTransaction = (item: Transaction) => async (dispatch: any, ge
 
         if (res) {
             if (item.Recurrency !== "none") {
-                const newItemtoInsert = {...item};
+                const newItemtoInsert = { ...item };
                 const transactionDate = moment(newItemtoInsert.Date);
                 newItemtoInsert.Scheduled = true;
                 newItemtoInsert.Date = getNewDateTransactionRecurrency(newItemtoInsert.Recurrency, transactionDate);
                 const resRecurrency = await insertTransactionDB(newItemtoInsert);
                 if (resRecurrency) {
+                    //Agendar notificación 
+                    setNotification({...newItemtoInsert, Id:res});
                     dispatch(setItemInserted(true));
                     setTimeout(function () {
                         dispatch(setItemInserted(false));
@@ -175,6 +178,8 @@ export const addTransactionScheduledNow = (item: Transaction) => async (dispatch
 
             const resRecurrency = await insertTransactionDB(newItemtoInsert);
             if (resRecurrency) {
+                //Agendar notificación 
+                setNotification({...newItemtoInsert, Id:resRecurrency});
                 dispatch(setItemUpdated(true));
                 setTimeout(function () {
                     dispatch(setItemUpdated(false));

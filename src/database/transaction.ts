@@ -3,10 +3,10 @@ import { Transaction } from "../types/transaction";
 import { db } from "./connector";
 import { TABLE_TRANSACTIONS } from "./types";
 
-export const insertTransactionDB = (item: Transaction): Promise<boolean> => {
+export const insertTransactionDB = (item: Transaction): Promise<number> => {
     return new Promise((resolve, reject) => {
-        const successCallback = (transaction: SQLTransaction, resultSet: SQLResultSet) => {
-            resolve(true);
+        const successCallback = (transaction: SQLTransaction, { insertId }: any) => {
+            resolve(insertId);
         };
         const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
             reject(error);
@@ -17,7 +17,7 @@ export const insertTransactionDB = (item: Transaction): Promise<boolean> => {
             INSERT INTO ${TABLE_TRANSACTIONS} 
             (
                 CategoryName, CategoryIcon, CategoryColor, 
-                CategoryGroup, CategoryType, Date, Amount, Note, Recurrency, Scheduled
+                CategoryGroup, CategoryType, Date, Amount, Note, Recurrency, Scheduled, ShouldNotify
             ) values (
                 "${item.Category.Name}",
                 "${item.Category.Icon}",
@@ -28,7 +28,8 @@ export const insertTransactionDB = (item: Transaction): Promise<boolean> => {
                 ${item.Amount},
                 "${(item.Note) ? item.Note : ""}",
                 "${item.Recurrency}",
-                ${item.Scheduled ? 1 : 0}
+                ${item.Scheduled ? 1 : 0},
+                ${item.ShouldNotify ? 1 : 0}
             )
         `;
         db.transaction((tx) => {

@@ -6,7 +6,7 @@ const version = "1.0"
 const callbackConnection = (db: SQLite.WebSQLDatabase) => {
 };
 
-export const db = SQLite.openDatabase('money_maker_v4', version, undefined, undefined, callbackConnection);
+export const db = SQLite.openDatabase('money_maker_v5', version, undefined, undefined, callbackConnection);
 
 export const initDB = () => {
     return new Promise((resolve, reject) => {
@@ -28,7 +28,8 @@ export const initDB = () => {
                 Date INTEGER, Amount INTEGER,
                 Note VARCHAR,
                 Recurrency VARCHAR,
-                Scheduled INT
+                Scheduled INT,
+                ShouldNotify INT
             )
         `;
         db.transaction((tx) => {
