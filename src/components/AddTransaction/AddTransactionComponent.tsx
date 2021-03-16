@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Alert } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import CustomButton from '../library/CustomButton';
 import CustomCurrencyInput from '../library/Input/CustomCurrencyInput';
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTransactions, insertTransaction, TransactionSlice } from '../../store/transactions';
 import CustomPicker from '../library/Input/CustomPicker/CustomPicker';
 import { RootState } from '../../store';
+import CustomSwitch from '../library/Input/CustomSwitch';
 
 interface AddTransactionComponentProps {
     setModalVisible: (state: boolean) => void
@@ -18,9 +19,11 @@ interface AddTransactionComponentProps {
 
 const AddTransactionComponent = (props: AddTransactionComponentProps) => {
     const { setModalVisible } = props;
-    const { handleSubmit, errors, control, getValues } = useForm();
+    const { handleSubmit, errors, control, getValues, watch } = useForm();
     const dispatch = useDispatch();
     const { itemInserted, errorMessage } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
+
+    const values = watch();
 
     const onSubmit = (data: Transaction) => {
         dispatch(insertTransaction(data));
@@ -38,7 +41,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
 
     const errorTextField = (<Text style={styles.fieldRequired}>Campo requerido</Text>);
     const currentDate = new Date();
-
+    
     return (
         <View style={styles.container}>
             <View style={styles.containerForm}>
@@ -86,12 +89,25 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
                 <Controller
                     render={({ value, onChange }) => (
                         <CustomPicker value={value} onChange={onChange} errorField={<></>}
-                            selectedDate={getValues().Date} />
+                            selectedDate={values.Date} />
                     )}
                     name="Recurrency"
                     control={control}
                     defaultValue={"none"}
                 />
+
+                {values.Recurrency !== "none" && <Controller
+                    render={({ value, onChange }) => (
+                        <CustomSwitch
+                            errorField={<></>}
+                            onChange={onChange}
+                            value={value}
+                        />
+                    )}
+                    name="ShouldNotify"
+                    control={control}
+                    defaultValue={true}
+                />}
             </View>
 
             <CustomButton onPress={handleSubmit(onSubmit)} title="SAVE" style={styles.customButtonStyle} />

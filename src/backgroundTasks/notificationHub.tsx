@@ -19,11 +19,18 @@ export const setNotification = async (item: Transaction) => {
 
     const notificationDate = moment([itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate()]).add(8, 'h');
 
+    const title = `${item.Note ? `${item.Category.Name}: ${item.Note}` : item.Category.Name}`
+    let type = "";
+    switch(item.Category.Type){
+        case "income": type = "ingreso"; break;
+        case "expenses": type = "gasto"; break;
+        default: type = "ahorro"; break;
+    }
     await Notifications.scheduleNotificationAsync({
         identifier: `${item.Id}`,
         content: {
-            title: `${item.Note ? item.Note : item.Category.Name}`,
-            body: `Se agregó el movimiento agendado con valor: "${item.Amount}" que tenías para hoy.`,
+            title: title,
+            body: `Se agregó el ${type} agendado con valor: "${item.Amount}" que tenías para hoy.`,
             data: item,
         },
         trigger: notificationDate.toDate().getTime(),
