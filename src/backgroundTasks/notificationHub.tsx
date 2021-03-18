@@ -6,15 +6,17 @@ import moment from 'moment';
 export const removeNotification = async (id: number) => {
     try {
         await Notifications.cancelScheduledNotificationAsync(id.toString());
-    } catch (error ) {
-        console.log(error);   
+    } catch (error) {
+        console.log(error);
     }
 }
 
 export const setNotification = async (item: Transaction) => {
     if (!item.ShouldNotify) return;
     if (item.Id) await removeNotification(item.Date.getTime());
-    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    //validación de fecha menor
+    if (item.Date.getTime() < new Date().getTime()) return;
+        const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
         const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);

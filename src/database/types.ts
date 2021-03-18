@@ -1,1 +1,1 @@
-export const TABLE_TRANSACTIONS = 'Self_Transactions';
+export const TABLE_TRANSACTIONS = 'Self__Transactions';

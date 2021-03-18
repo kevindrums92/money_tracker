@@ -10,8 +10,13 @@ import { Provider } from 'react-redux';
 import store from './src/store';
 import { initDB } from './src/database/connector';
 
-import { registerScheduledBackgroundTask } from './src/backgroundTasks/scheduledBackgroundFetch';
+import { bgtask, registerScheduledBackgroundTask, TASKNAME } from './src/backgroundTasks/scheduledBackgroundFetch';
 import * as Notifications from 'expo-notifications';
+import * as TaskManager from 'expo-task-manager';
+TaskManager.defineTask(TASKNAME, bgtask);
+
+registerScheduledBackgroundTask();
+
 Notifications.setNotificationHandler({
   handleNotification: async () => {
     return {
@@ -40,7 +45,6 @@ export default function App() {
     }
     _initDB();
 
-    registerScheduledBackgroundTask();
   });
 
   if (!isLoadingComplete || !dbLoaded) {
