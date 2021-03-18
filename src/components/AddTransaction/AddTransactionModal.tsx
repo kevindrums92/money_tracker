@@ -1,38 +1,13 @@
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import DismissKeyboard from '../library/DismissKeyboard';
-import AddTransactionComponent from './AddTransactionComponent';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import ManageTransactionModal from './ManageTransactionModal';
 
 export default function AddTransactionModal() {
     const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.centeredView}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                }}>
-                <DismissKeyboard>
-                    <View style={styles.centeredViewModal}>
-                        <View style={styles.modalView}>
-                            {/* header */}
-                            <View style={styles.containerHeader}>
-                                <TouchableOpacity style={{}} onPress={() => { setModalVisible(false); }}>
-                                    <Ionicons style={styles.image} size={35} name="close" color="white" />
-                                </TouchableOpacity>
-                                <View style={styles.containerTitleHeader}>
-                                    <Text style={styles.titleHeader}>NEW TRANSACTION</Text>
-                                </View>
-                            </View>
-                            {/* Content */}
-                            <AddTransactionComponent setModalVisible={setModalVisible}/>
-                        </View>
-                    </View>
-                </DismissKeyboard>
-            </Modal>
+            <ManageTransactionModal modalVisible={modalVisible} setModalVisible={setModalVisible}/>
 
             <TouchableOpacity style={styles.imageContainer}
                 onPress={() => { setModalVisible(true); }}>

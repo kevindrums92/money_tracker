@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment';
-import { setNotification } from '../backgroundTasks/notificationHub';
-import { getListTransactions, insertTransactionDB, setScheduledFalseTransactionDB } from '../database/transaction';
+import { removeNotification, setNotification } from '../backgroundTasks/notificationHub';
+import { getListTransactions, insertTransactionDB, removeTransactionDB, setScheduledFalseTransactionDB, updateTransactionDB } from '../database/transaction';
 import { Transaction } from '../types/transaction';
 import { endOfMonth, startOfMonth } from '../utils/date';
 import { getNewDateTransactionRecurrency, getTransactionListExpenses, getTransactionListIncome, parseTransactionData } from '../utils/transactionUtils';
@@ -61,7 +61,7 @@ const slice = createSlice({
             income: action.payload.income,
             expenses: action.payload.expenses
         }),
-        setItemInserted: (state, action) => ({
+        setItemInsertedOrDeleted: (state, action) => ({
             ...state,
             itemInserted: action.payload
         }),
@@ -82,7 +82,7 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Action
-const { setTransactions, setFilters, setOverviewBalance, setItemInserted, setErrorMessage, setItemUpdated, setLoading } = slice.actions;
+const { setTransactions, setFilters, setOverviewBalance, setItemInsertedOrDeleted, setErrorMessage, setItemUpdated, setLoading } = slice.actions;
 export const getTransactions = () => async (dispatch: any, getState: any) => {
     try {
         const filters = getState().transactions.filters;
@@ -139,17 +139,17 @@ export const insertTransaction = (item: Transaction) => async (dispatch: any, ge
                 const resRecurrency = await insertTransactionDB(newItemtoInsert);
                 if (resRecurrency) {
                     //Agendar notificación 
-                    setNotification({...newItemtoInsert, Id:res});
-                    dispatch(setItemInserted(true));
+                    setNotification({ ...newItemtoInsert, Id: res });
+                    dispatch(setItemInsertedOrDeleted(true));
                     setTimeout(function () {
-                        dispatch(setItemInserted(false));
-                    }, 1000);
+                        dispatch(setItemInsertedOrDeleted(false));
+                    }, 100);
                 }
             } else {
-                dispatch(setItemInserted(true));
+                dispatch(setItemInsertedOrDeleted(true));
                 setTimeout(function () {
-                    dispatch(setItemInserted(false));
-                }, 1000);
+                    dispatch(setItemInsertedOrDeleted(false));
+                }, 100);
             }
             dispatch(setLoading(false));
         }
@@ -158,7 +158,7 @@ export const insertTransaction = (item: Transaction) => async (dispatch: any, ge
             dispatch(setErrorMessage(e.message));
             setTimeout(function () {
                 dispatch(setErrorMessage(""));
-            }, 1000);
+            }, 100);
         }
         dispatch(setLoading(false));
         return console.error(e);
@@ -179,7 +179,7 @@ export const addTransactionScheduledNow = (item: Transaction) => async (dispatch
             const resRecurrency = await insertTransactionDB(newItemtoInsert);
             if (resRecurrency) {
                 //Agendar notificación 
-                setNotification({...newItemtoInsert, Id:resRecurrency});
+                setNotification({ ...newItemtoInsert, Id: resRecurrency });
                 dispatch(setItemUpdated(true));
                 setTimeout(function () {
                     dispatch(setItemUpdated(false));
@@ -192,10 +192,60 @@ export const addTransactionScheduledNow = (item: Transaction) => async (dispatch
             dispatch(setErrorMessage(e.message));
             setTimeout(function () {
                 dispatch(setErrorMessage(""));
-            }, 1000);
+            }, 100);
         }
         dispatch(setLoading(false));
 
+        return console.error(e);
+    }
+}
+
+export const removeTransaction = (item: Transaction) => async (dispatch: any, getState: any) => {
+    try {
+        dispatch(setLoading(true));
+        const res = await removeTransactionDB(item);
+
+        if (res && item.Id && item.ShouldNotify && item.Scheduled) {
+            await removeNotification(item.Date.getTime());
+        }
+        dispatch(setLoading(false));
+        dispatch(setItemInsertedOrDeleted(true));
+        setTimeout(function () {
+            dispatch(setItemInsertedOrDeleted(false));
+        }, 100);
+    } catch (e) {
+        if (e.message) {
+            dispatch(setErrorMessage(e.message));
+            setTimeout(function () {
+                dispatch(setErrorMessage(""));
+            }, 100);
+        }
+        dispatch(setLoading(false));
+
+        return console.error(e);
+    }
+}
+
+export const updateTransaction = (item: Transaction) => async (dispatch: any, getState: any) => {
+    try {
+        dispatch(setLoading(true));
+        const res = await updateTransactionDB(item);
+
+        if (res) {
+            dispatch(setItemInsertedOrDeleted(true));
+            setTimeout(function () {
+                dispatch(setItemInsertedOrDeleted(false));
+            }, 100);
+            dispatch(setLoading(false));
+        }
+    } catch (e) {
+        if (e.message) {
+            dispatch(setErrorMessage(e.message));
+            setTimeout(function () {
+                dispatch(setErrorMessage(""));
+            }, 100);
+        }
+        dispatch(setLoading(false));
         return console.error(e);
     }
 }

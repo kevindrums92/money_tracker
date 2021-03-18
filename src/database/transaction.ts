@@ -107,3 +107,45 @@ export const getListTransactions = (startDate: Date, endDate: Date): Promise<Arr
         });
     });
 }
+
+export const removeTransactionDB = (item: Transaction): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        const successCallback = (transaction: SQLTransaction, resultSet: SQLResultSet) => {
+            resolve(true);
+        };
+        const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
+            reject(error);
+            return true;
+        }
+        const sql = `
+            DELETE FROM ${TABLE_TRANSACTIONS} 
+                WHERE Id = ${item.Id}
+        `;
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql, undefined, successCallback, errorCallback
+            );
+        });
+    });
+}
+
+export const updateTransactionDB = (item: Transaction): Promise<number> => {
+    return new Promise((resolve, reject) => {
+        const successCallback = (transaction: SQLTransaction, { insertId }: any) => {
+            resolve(insertId);
+        };
+        const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
+            reject(error);
+            return true;
+        }
+
+        const sql = `
+            
+        `;
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql, undefined, successCallback, errorCallback
+            );
+        });
+    });
+}

@@ -15,6 +15,7 @@ import { addTransactionScheduledNow } from '../store/transactions';
 interface TransactionListProps {
     data: Transaction[],
     loading: boolean,
+    setItemtoEdit: (item:any) => void,
 }
 
 const renderTransactionItem = (item: Transaction) => {
@@ -108,7 +109,7 @@ const renderTransactionItemScheduled = (item: Transaction, loading: boolean) => 
     </>;
 }
 
-const renderSection = (transactions: Transaction[], dateText: string, balance: number, key: number, loading: boolean) => {
+const renderSection = (transactions: Transaction[], dateText: string, balance: number, key: number, loading: boolean, setItemtoEdit:any) => {
     return (
         <React.Fragment key={key}>
             <View style={styles.sectionHeader}>
@@ -123,10 +124,13 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
             <View style={styles.transactionContainer}>
                 {transactions.map((item: Transaction, key: number) => {
                     return (
-                        <View style={styles.container} key={key}>
+                        <TouchableOpacity style={styles.container} key={key}
+                            onPress={() => {
+                                setItemtoEdit(item);
+                            }}>
                             {!item.Scheduled && renderTransactionItem(item)}
                             {item.Scheduled && renderTransactionItemScheduled(item, loading)}
-                        </View>
+                        </TouchableOpacity>
                     );
                 })}
             </View>
@@ -135,7 +139,7 @@ const renderSection = (transactions: Transaction[], dateText: string, balance: n
 }
 
 const TransactionList = (props: TransactionListProps) => {
-    const { data, loading } = props;
+    const { data, loading, setItemtoEdit } = props;
     const groups = groupArrayOfObjects(data, "Date");
     const groupArrays = Object.keys(groups).map((key) => {
         const transactions = groups[key];
@@ -153,7 +157,7 @@ const TransactionList = (props: TransactionListProps) => {
     });
     return <>
         {groupArrays.map((item, index) => {
-            return renderSection(item.transactions, item.date, item.balance, index, loading);
+            return renderSection(item.transactions, item.date, item.balance, index, loading, setItemtoEdit);
         })}
     </>;
 };

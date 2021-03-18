@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import ManageTransactionModal from '../components/AddTransaction/ManageTransactionModal';
 import DateSelector from '../components/DateSelector';
 
 import Overview from '../components/Overview';
@@ -13,6 +14,7 @@ import { RootState } from '../store';
 import { getTransactions, TransactionSlice } from '../store/transactions';
 
 export default function HomeScreen() {
+  const [itemtoEdit, setItemtoEdit] = React.useState(undefined);
   const dispatch = useDispatch();
   const { itemUpdated,
     data,
@@ -41,7 +43,10 @@ export default function HomeScreen() {
           <Overview balance={balance} income={income} expenses={expenses}/>
         </View>
         <DateSelector count={count} filters={filters} />
-        <TransactionList data={data} loading={loading} />
+        <TransactionList data={data} loading={loading} setItemtoEdit={setItemtoEdit}/>
+        <ManageTransactionModal modalVisible={itemtoEdit !== undefined} setModalVisible={(value: boolean)=>{
+          if(!value) setItemtoEdit(undefined);
+        }} item={itemtoEdit} />
       </ScrollView>
     </View>
   );

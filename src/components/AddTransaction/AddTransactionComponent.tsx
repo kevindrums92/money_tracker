@@ -14,12 +14,16 @@ import { RootState } from '../../store';
 import CustomSwitch from '../library/Input/CustomSwitch';
 
 interface AddTransactionComponentProps {
-    setModalVisible: (state: boolean) => void
+    setModalVisible: (state: boolean) => void,
+    item?: Transaction,
 }
 
 const AddTransactionComponent = (props: AddTransactionComponentProps) => {
-    const { setModalVisible } = props;
-    const { handleSubmit, errors, control, getValues, watch } = useForm();
+    const { setModalVisible, item } = props;
+
+    const { handleSubmit, errors, control, watch } = useForm({
+        defaultValues: item
+    });
     const dispatch = useDispatch();
     const { itemInserted, errorMessage } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
 
@@ -41,7 +45,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
 
     const errorTextField = (<Text style={styles.fieldRequired}>Campo requerido</Text>);
     const currentDate = new Date();
-    
+
     return (
         <View style={styles.container}>
             <View style={styles.containerForm}>
@@ -58,7 +62,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
 
                 <Controller
                     render={({ value, onChange }) => (
-                        <CategoryInput value={value} onChange={onChange} errorField={errors.Category && errorTextField} />
+                        <CategoryInput value={value} onChange={onChange} errorField={errors.Category ? errorTextField : <></>} />
                     )}
                     name="Category"
                     control={control}
@@ -68,7 +72,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
 
                 <Controller
                     render={({ value, onChange }) => (
-                        <NoteInput value={value} onChange={onChange} errorField={errors.Note && errorTextField} />
+                        <NoteInput value={value} onChange={onChange} errorField={errors.Note ? errorTextField : <></>} />
                     )}
                     name="Note"
                     control={control}
@@ -78,7 +82,7 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
 
                 <Controller
                     render={({ value, onChange }) => (
-                        <DateInput value={value} onChange={onChange} errorField={errors.Date && errorTextField} />
+                        <DateInput value={value} onChange={onChange} errorField={errors.Date ? errorTextField : <></>} />
                     )}
                     name="Date"
                     control={control}
@@ -109,8 +113,8 @@ const AddTransactionComponent = (props: AddTransactionComponentProps) => {
                     defaultValue={true}
                 />}
             </View>
-
-            <CustomButton onPress={handleSubmit(onSubmit)} title="SAVE" style={styles.customButtonStyle} />
+            { !item && <CustomButton onPress={handleSubmit(onSubmit)} title={item ? "MODIFICAR" : "AGREGAR"} style={styles.customButtonStyle} />
+            }
         </View>
     );
 };
