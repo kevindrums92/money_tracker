@@ -78,6 +78,7 @@ export const registerScheduledBackgroundTask = async () => {
 
             Location.startLocationUpdatesAsync(TASKNAME, {
                 accuracy: Location.Accuracy.High,
+                showsBackgroundLocationIndicator:false,
                 timeInterval: INTERVAL,
                 //distanceInterval: LOCATION_DISTANCE_INTERVAL,
                 foregroundService: {
