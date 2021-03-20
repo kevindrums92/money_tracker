@@ -4,10 +4,12 @@ import {
 import { combineReducers } from 'redux'
 import thunk from "redux-thunk";
 import transactions from './transactions';
+import settings from './settings';
 
 
 const reducer = combineReducers({
-    transactions
+    transactions,
+    settings
 });
 
 const store = configureStore({

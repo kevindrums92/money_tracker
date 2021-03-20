@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         alignSelf: "center",
-        textTransform: "uppercase"
+        textTransform: "uppercase",
     },
     appButtonContainerFlat: {
         flexDirection: 'row',
@@ -67,7 +67,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderWidth: 1,
         borderColor: 'silver',
-        marginTop:5
+        marginTop:5,
+        justifyContent:'center'
     },
     image: {
         justifyContent: 'center',

@@ -1,7 +1,7 @@
 import { SQLTransaction, SQLResultSet, SQLError } from "expo-sqlite";
 import { Transaction } from "../types/transaction";
 import { db } from "./connector";
-import { TABLE_TRANSACTIONS } from "./types";
+import { TABLE_TRANSACTIONS } from "./utilsDB";
 
 export const insertTransactionDB = (item: Transaction): Promise<number> => {
     return new Promise((resolve, reject) => {

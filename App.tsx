@@ -8,8 +8,6 @@ import Navigation from './src/navigation';
 import AppLoading from 'expo-app-loading';
 import { Provider } from 'react-redux';
 import store from './src/store';
-import { initDB } from './src/database/connector';
-
 import { bgtask, registerScheduledBackgroundTask, TASKNAME } from './src/backgroundTasks/scheduledBackgroundFetch';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
@@ -30,24 +28,8 @@ Notifications.setNotificationHandler({
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [dbLoaded, setDbLoaded] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => {
-    async function _initDB() {
-      try {
-        await initDB();
-        setDbLoaded(true);
-      } catch (error) {
-        console.log(error);
-        setDbLoaded(true);
-      }
-    }
-    _initDB();
-
-  });
-
-  if (!isLoadingComplete || !dbLoaded) {
+  if (!isLoadingComplete) {
     return <AppLoading />;
   } else {
     return (

@@ -65,7 +65,7 @@ const CustomPicker = (props: CustomPickerProps) => {
                 </View>
                 <ModalPicker {...props} modalVisible={isPickerVisible} closeControl={() => {
                     setIsPickerVisible(false);
-                }} />
+                }} options={getRecurrencyTypes}/>
             </View>
         </TouchableOpacity>
 

@@ -12,10 +12,11 @@ interface ModalPickerProps {
     modalVisible: boolean;
     closeControl: () => void;
     onChange: (...event: any[]) => void;
+    options:any;
 }
 
 const ModalPicker = (props: ModalPickerProps) => {
-    const { onChange, value } = props;
+    const { onChange, value, options } = props;
 
     let modalViewStyles = styles.modalView;
     let textColor: string;
@@ -60,7 +61,7 @@ const ModalPicker = (props: ModalPickerProps) => {
                         onValueChange={onChange}
                         itemStyle={{ color: textColor }}
                     >
-                        {getRecurrencyTypes.map((i, index) => {
+                        {options.map((i:any, index:any) => {
                             return <Picker.Item key={index} label={i[0]} value={i[1]} />;
                         })}
                     </Picker>
