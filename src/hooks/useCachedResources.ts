@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
-import { initDB } from '../database/connector';
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -13,8 +12,6 @@ export default function useCachedResources() {
       try {
         SplashScreen.preventAutoHideAsync();
 
-        //Create db
-        await initDB();
         // Load fonts
         await Font.loadAsync({
           ...Ionicons.font,

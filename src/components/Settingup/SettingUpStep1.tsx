@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 import { submitStep1 } from '../../store/settings';
+import { Budget } from '../../types/Settings';
 import { accentColor, grayColor } from '../../utils/appColors';
 import { getPeriodicities, getStartdayWeek, getStartdayYear, getStartdayMonth } from '../../utils/globals';
 import CustomButton from '../library/CustomButton';
@@ -17,9 +18,8 @@ const SettingUpStep1 = (props: SettingUpStep1Props) => {
     const { handleSubmit, errors, control, watch } = useForm();
     const values = watch();
 
-    const onSubmit = (data: any) => {
-        console.log(data);
-        dispatch(submitStep1({}));
+    const onSubmit = (data: Budget) => {
+        dispatch(submitStep1(data));
     }
 
     return (

@@ -1,6 +1,7 @@
-export const DB_NAME = 'money_maker_v5';
-export const TABLE_TRANSACTIONS = 'Self_________Transactions';
-export const TABLE_BUDGET = 'Budget';
+export const DB_NAME = 'money_maker_v14';
+export const TABLE_TRANSACTIONS = 'SelfTransactions';
+export const TABLE_BUDGET = 'SelfBudget';
+export const TABLE_SETTINGS = 'SelfSettings';
 
 export const sqlCreateTableTransactions = `CREATE TABLE IF NOT EXISTS ${TABLE_TRANSACTIONS} (
     Id INTEGER NOT NULL PRIMARY KEY,
@@ -14,12 +15,24 @@ export const sqlCreateTableTransactions = `CREATE TABLE IF NOT EXISTS ${TABLE_TR
     Recurrency VARCHAR,
     Scheduled INT,
     ShouldNotify INT
-)`;
+)
+`;
 
 export const sqlBudget = `CREATE TABLE IF NOT EXISTS ${TABLE_BUDGET} (
     Id INTEGER NOT NULL PRIMARY KEY,
     Name VARCHAR,
     Icon VARCHAR,
     Periodicity VARCHAR,
-    Startdat INT,
-)`;
+    Startday INT
+)
+`;
+
+export const sqlSettings = `CREATE TABLE IF NOT EXISTS ${TABLE_SETTINGS} (
+    Id INTEGER NOT NULL PRIMARY KEY,
+    Currency VARCHAR,
+    DailyNotifications INT,
+    ScheduledTransactionsNotifications INT,
+    SelectedBudget INT,
+    WelcomeComplete INT
+)
+`;

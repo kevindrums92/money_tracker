@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 import { submitStep2 } from '../../store/settings';
+import { Settings } from '../../types/Settings';
 import { accentColor, grayColor } from '../../utils/appColors';
-import { getPeriodicities, getStartdayWeek, getStartdayYear, getStartdayMonth } from '../../utils/globals';
 import CustomButton from '../library/CustomButton';
-import ModalPicker from '../library/Input/CustomPicker/ModalPicker';
 
 interface SettingUpStep2Props { }
 
@@ -16,9 +14,8 @@ const SettingUpStep2 = (props: SettingUpStep2Props) => {
     const { handleSubmit, errors, control, watch } = useForm();
     const values = watch();
 
-    const onSubmit = (data: any) => {
-        console.log(data);
-        dispatch(submitStep2({}));
+    const onSubmit = (data: Settings) => {
+        dispatch(submitStep2(data));
     }
 
     return (
@@ -69,7 +66,7 @@ const SettingUpStep2 = (props: SettingUpStep2Props) => {
                             <View style={{
                                 flexDirection: 'row',
                             }}>
-                                <Text style={{ ...styles.textInputText, flex: 5 }}>Te avisaremos cada que un registro agendado sea agregado</Text>
+                                <Text style={{ ...styles.textInputText, flex: 5 }}>Te avisaremos cuando un registro agendado sea agregado</Text>
                                 <Switch
                                     style={{
                                         alignSelf: 'center',
@@ -82,7 +79,7 @@ const SettingUpStep2 = (props: SettingUpStep2Props) => {
                             </View>
                         </TouchableOpacity>
                     )}
-                    name="ScheduledTransactionNotifications"
+                    name="ScheduledTransactionsNotifications"
                     control={control}
                     rules={{ required: true }}
                     defaultValue={true}

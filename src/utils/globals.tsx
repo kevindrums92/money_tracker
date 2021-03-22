@@ -1,4 +1,4 @@
-type BudgetPeriodicity = "monthly" | "weekly" | "yearly";
+import { BudgetPeriodicity } from "../types/Settings";
 
 export const getPeriodicities: [string, BudgetPeriodicity][] = [
     ["Mensual", "monthly"],

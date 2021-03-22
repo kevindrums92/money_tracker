@@ -14,13 +14,14 @@ import LinkingConfiguration from './LinkingConfiguration';
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
-  const { welcomeComplete } = useSelector<RootState, SettingsSlice>((state) => state.settings);
+
+  const { settings } = useSelector<RootState, SettingsSlice>((state) => state.settings);
   
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={DarkTheme}>
-      <RootNavigator initialRoute={welcomeComplete ? "Root": "SettingUp"}/>
+      <RootNavigator initialRoute={settings?.WelcomeComplete ? "Root" : "SettingUp"} />
     </NavigationContainer>
   );
 }
@@ -29,7 +30,7 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator<RootStackParamList>();
 
-function RootNavigator({initialRoute}: any) {
+function RootNavigator({ initialRoute }: any) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
       <Stack.Screen name="SettingUp" component={SettingUp} />

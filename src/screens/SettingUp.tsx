@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, SafeAreaView } from 'react-native';
-import { useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DismissKeyboard from '../components/library/DismissKeyboard';
 import SettingUpStep1 from '../components/Settingup/SettingUpStep1';
 import SettingUpStep2 from '../components/Settingup/SettingUpStep2';
 import { RootState } from '../store';
-import { SettingsSlice } from '../store/settings';
+import { getSettings, SettingsSlice } from '../store/settings';
 import { accentColor, grayColor } from '../utils/appColors';
 
 const renderStepIndicator = (step: number) => {
@@ -27,13 +27,23 @@ interface SettingUpProps {
  }
 
 const SettingUp = ({navigation}: SettingUpProps) => {
-    const { step, welcomeComplete } = useSelector<RootState, SettingsSlice>((state) => state.settings);
+    const dispatch = useDispatch();
+
+    const { step, settings, loading } = useSelector<RootState, SettingsSlice>((state) => state.settings);
     React.useEffect(()=>{
-        if(welcomeComplete)
+        dispatch(getSettings());
+        if(settings?.WelcomeComplete)
             {
                 navigation.navigate('Root');
             }
-    },[welcomeComplete])
+    },[settings]);
+    
+    if(loading){
+        return (<View>
+            <Text>Loading</Text>
+        </View>);
+    }
+
     return (
         <DismissKeyboard>
             <SafeAreaView style={styles.container}>
