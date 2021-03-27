@@ -6,10 +6,32 @@ import { Text, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { changePeriod, TransactionFiltersSlice } from '../store/transactions';
 
-interface DateSelectorProps { 
+interface DateSelectorProps {
     count: number,
     filters: TransactionFiltersSlice
 }
+
+const getDateText = (filters: TransactionFiltersSlice) => {
+    switch (filters.filterPeriod) {
+        case "monthly":
+            if (filters.startDay === 1) {
+                return moment(filters.startDate).format("MMMM YYYY");
+            }
+            return `${moment(filters.startDate).format("DD MMM")} - ${moment(filters.endDate).format("DD MMM")}`
+
+        case "weekly":
+            return `${moment(filters.startDate).format("DD MMM")} - ${moment(filters.endDate).format("DD MMM")}`
+
+        case "yearly":
+            if (filters.startDay !== 1) {
+                return `${moment(filters.startDate).format("DD MMM YYYY")} - ${moment(filters.endDate).format("DD MMM YYYY")}`
+            }
+            return `${moment(filters.startDate).format("YYYY")}`
+        default:
+            break;
+    }
+
+};
 
 const DateSelector = (props: DateSelectorProps) => {
     const { count, filters } = props;
@@ -25,7 +47,7 @@ const DateSelector = (props: DateSelectorProps) => {
             </TouchableOpacity>
             <View style={{ ...styles.item, ...styles.itemContent }}>
                 <View>
-                    <Text style={styles.date}>{moment(filters.startDate).format("MMMM YYYY")}</Text>
+                    <Text style={styles.date}>{getDateText(filters)}</Text>
                 </View>
                 <View>
                     <Text style={styles.transactions}>{count} TRANSACCIONES</Text>
@@ -65,7 +87,7 @@ const styles = StyleSheet.create({
         width: '60%',
     },
     date: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'white'
     },
     transactions: {

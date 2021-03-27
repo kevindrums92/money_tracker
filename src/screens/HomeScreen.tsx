@@ -27,10 +27,6 @@ export default function HomeScreen() {
   } = useSelector<RootState, TransactionSlice>((state) => state.transactions);
 
   useEffect(() => {
-    dispatch(getTransactions());
-  }, []);
-
-  useEffect(() => {
     if (itemUpdated)
       dispatch(getTransactions());
   }, [itemUpdated]);

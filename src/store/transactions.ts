@@ -2,15 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment';
 import { removeNotification, setNotification } from '../backgroundTasks/notificationHub';
 import { getListTransactions, insertTransactionDB, removeTransactionDB, setScheduledFalseTransactionDB, updateTransactionDB } from '../database/transaction';
+import { BudgetPeriodicity, Settings } from '../types/Settings';
 import { Transaction } from '../types/transaction';
-import { endOfMonth, startOfMonth } from '../utils/date';
+import { endOfMonth, getCurrentMonth, getCurrentYear, startOfMonth } from '../utils/date';
 import { getNewDateTransactionRecurrency, getTransactionListExpenses, getTransactionListIncome, parseTransactionData } from '../utils/transactionUtils';
 
-type FilterPeriod = "Monthly" | "Weekly" | "Yearly";
 export interface TransactionFiltersSlice {
     startDate: Date;
     endDate: Date;
-    filterPeriod: FilterPeriod;
+    filterPeriod: BudgetPeriodicity;
+    startDay: number;
 }
 export interface TransactionSlice {
     data: Transaction[],
@@ -31,7 +32,8 @@ const initialState: TransactionSlice = {
     filters: {
         startDate: startOfMonth(),
         endDate: endOfMonth(),
-        filterPeriod: "Monthly"
+        filterPeriod: "monthly",
+        startDay: 1
     },
     income: 0,
     expenses: 0,
@@ -103,23 +105,73 @@ export const getTransactions = () => async (dispatch: any, getState: any) => {
     }
 }
 
+export const setInitialFilters = (settings: Settings) => async (dispatch: any, getState: any) => {
+    const newFilters: TransactionFiltersSlice = {
+        filterPeriod: settings.BudgetObj?.Periodicity || "monthly",
+        startDate: new Date(),
+        endDate: new Date(),
+        startDay: settings.BudgetObj?.Startday || 1
+    }
+    const { Startday } = settings.BudgetObj || { Startday: 1 };
+    switch (settings.BudgetObj?.Periodicity) {
+        case "monthly":
+            newFilters.startDate = moment([getCurrentYear, getCurrentMonth - 1, Startday]).toDate();
+            if (Startday === 1) {
+                newFilters.endDate = endOfMonth();
+            } else {
+                //le resto un minuto para que por ejemplo; si la fecha inicio es 5 de marzo a las 00, la fecha fin sea 4 marzo a las 23h:59m
+                newFilters.endDate = moment(newFilters.startDate).add(1, 'month').add(-1, 'minute').toDate();
+            }
+            break;
+        case "weekly":
+            newFilters.startDate = moment().startOf('week').add(Startday === 7 ? 0 : Startday, 'days').toDate();
+            newFilters.endDate = moment(newFilters.startDate).add(1, 'week').add(-1, 'minute').toDate();
+
+            break;
+        case "yearly":
+            newFilters.startDate = moment([getCurrentYear, 0, Startday]).toDate();
+            newFilters.endDate = moment(newFilters.startDate).add(1, 'year').add(-1, 'minute').toDate();
+            break;
+        default:
+            break;
+    }
+    dispatch(setFilters(newFilters));
+    dispatch(getTransactions());
+
+
+
+}
+
 export const changePeriod = (forward: boolean) => async (dispatch: any, getState: any) => {
     try {
         const { filters } = getState().transactions as TransactionSlice;
 
+        const newFilters: TransactionFiltersSlice = {
+            ...filters
+        };
+        const acum = (forward) ? +1 : -1;
+
         switch (filters.filterPeriod) {
-            case "Monthly":
-                const acum = (forward) ? +1 : -1;
-                const newStartDate = moment(filters.startDate).add(acum, 'M').toDate();
-                const newFilters: TransactionFiltersSlice = {
-                    ...filters,
-                    startDate: newStartDate,
-                    endDate: endOfMonth(newStartDate.getMonth() + 1, newStartDate.getFullYear())
-                };
-                dispatch(setFilters(newFilters));
-                dispatch(getTransactions());
+            case "monthly":
+                newFilters.startDate = moment(filters.startDate).add(acum, 'M').toDate();
+                if (filters.startDay === 1) {
+                    newFilters.endDate = endOfMonth(newFilters.startDate.getMonth() + 1, newFilters.startDate.getFullYear())
+                } else {
+                    newFilters.endDate = moment(newFilters.startDate).add(1, 'month').add(-1, 'minute').toDate();
+                }
+                break;
+            case "weekly":
+                newFilters.startDate = moment(filters.startDate).add(acum, 'week').toDate();
+                newFilters.endDate = moment(newFilters.startDate).add(1, 'week').add(-1, 'minute').toDate();
+                break;
+            case "yearly":
+                newFilters.startDate = moment(filters.startDate).add(acum, 'year').toDate();
+                newFilters.endDate = moment(newFilters.startDate).add(1, 'year').add(-1, 'minute').toDate();
                 break;
         }
+
+        dispatch(setFilters(newFilters));
+        dispatch(getTransactions());
     } catch (e) {
         return console.error(e.message);
     }

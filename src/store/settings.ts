@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { initDB } from '../database/connector';
 import { getBudgetsDB, getSettingsDB, insertBudgetDB, insertSettingsDB } from '../database/settings';
 import { Budget, Settings } from '../types/Settings';
+import { setInitialFilters } from './transactions';
 
 export interface SettingsSlice {
     settings?: Settings;
@@ -64,8 +65,9 @@ export const getSettings = () => async (dispatch: any, getState: any) => {
                     }
                 }
                 //hago el set settings y mando a hacer la primera carga
+                //seteo antes los filters del date selector
+                dispatch(setInitialFilters(settings));
                 dispatch(setSettings(settings));
-                console.log(settings);
             } else {
                 const budgets = await getBudgetsDB();
                 if (budgets && budgets.length > 0) {
