@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import useCachedResources from './src/hooks/useCachedResources';
@@ -11,6 +11,7 @@ import store from './src/store';
 import { bgtask, registerScheduledBackgroundTask, TASKNAME } from './src/backgroundTasks/scheduledBackgroundFetch';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
+import { getSettings } from './src/store/settings';
 TaskManager.defineTask(TASKNAME, bgtask);
 
 registerScheduledBackgroundTask();
@@ -28,7 +29,11 @@ Notifications.setNotificationHandler({
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  
+  const { dispatch } = store;
+  useEffect(() => {
+    dispatch<any>(getSettings());
+  });
+
   if (!isLoadingComplete) {
     return <AppLoading />;
   } else {

@@ -31,7 +31,6 @@ const SettingUp = ({navigation}: SettingUpProps) => {
 
     const { step, settings, loading } = useSelector<RootState, SettingsSlice>((state) => state.settings);
     React.useEffect(()=>{
-        dispatch(getSettings());
         if(settings?.WelcomeComplete)
             {
                 navigation.navigate('Root');

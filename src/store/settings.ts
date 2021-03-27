@@ -25,8 +25,8 @@ const slice = createSlice({
         setStep: (state, action) => ({
             ...state, step: action.payload
         }),
-        setLoadingComplete: (state) => ({
-            ...state, loading: false
+        setLoading: (state, action) => ({
+            ...state, loading: action.payload
         }),
         setBudgetInserted: (state, action: PayloadAction<number>) => ({
             ...state, budgetInserted: action.payload
@@ -39,18 +39,20 @@ const slice = createSlice({
 export default slice.reducer;
 
 // Action
-const { setStep, setLoadingComplete, setBudgetInserted, setSettings } = slice.actions;
+const { setStep, setLoading, setBudgetInserted, setSettings } = slice.actions;
 
 export const getSettings = () => async (dispatch: any, getState: any) => {
     try {
+        const { loading } = getState().settings;
+        if (!loading) return;
         const resinitDB = await initDB();
         if (resinitDB) {
             const resSettings = await getSettingsDB();
             if (resSettings) {
                 const settings: Settings = {
                     Id: resSettings.Id,
-                    DailyNotifications: resSettings.DailyNotifications === 1 ? true: false,
-                    ScheduledTransactionsNotifications: resSettings.ScheduledTransactionsNotifications === 1 ? true: false,
+                    DailyNotifications: resSettings.DailyNotifications === 1 ? true : false,
+                    ScheduledTransactionsNotifications: resSettings.ScheduledTransactionsNotifications === 1 ? true : false,
                     Currency: resSettings.Currency,
                     SelectedBudget: resSettings.SelectedBudget,
                     WelcomeComplete: true,
@@ -61,9 +63,9 @@ export const getSettings = () => async (dispatch: any, getState: any) => {
                         Startday: resSettings.Startday
                     }
                 }
+                //hago el set settings y mando a hacer la primera carga
                 dispatch(setSettings(settings));
                 console.log(settings);
-                
             } else {
                 const budgets = await getBudgetsDB();
                 if (budgets && budgets.length > 0) {
@@ -72,7 +74,7 @@ export const getSettings = () => async (dispatch: any, getState: any) => {
                 }
             }
         }
-        setTimeout(() => { dispatch(setLoadingComplete()); }, 500);
+        setTimeout(() => { dispatch(setLoading(false)); }, 500);
     } catch (error) {
         console.log(error);
         return console.error(error);
@@ -91,6 +93,7 @@ export const submitStep1 = (item: Budget) => async (dispatch: any, getState: any
 
 export const submitStep2 = (item: Settings) => async (dispatch: any, getState: any) => {
     try {
+        dispatch(setLoading(true));
         const { budgetInserted } = getState().settings;
         const itemToInsert: Settings = {
             ...item,
