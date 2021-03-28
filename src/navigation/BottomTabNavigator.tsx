@@ -17,15 +17,15 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: '#FF8B96', style:{backgroundColor:'#303030'} }}>
+      tabBarOptions={{ activeTintColor: '#FF8B96', style: { backgroundColor: '#303030' } }}>
       <BottomTab.Screen
         name="Home"
         component={HomeNavigator}
         options={{
-          title: "Overview",
+          title: "General",
           tabBarIcon: ({ color }) => <TabBarIcon name="eye" color={color} />,
         }}
-        
+
       />
       <BottomTab.Screen name="AddTransaction" component={AddTransactionComponent} options={{
         tabBarButton: () => (<AddTransactionModal />),
@@ -35,6 +35,7 @@ export default function BottomTabNavigator() {
         component={SettingsNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="settings" color={color} />,
+          title: "Configuraciones",
         }}
       />
     </BottomTab.Navigator>
@@ -66,10 +67,16 @@ const SettingsStack = createStackNavigator<SettingsParamList>();
 
 function SettingsNavigator() {
   return (
-    <SettingsStack.Navigator>
+    <SettingsStack.Navigator >
       <SettingsStack.Screen
         name="SettingsScreen"
         component={SettingsScreen}
+        options={{
+          title: 'Configuraciones',
+          headerShown: true,
+          headerLeft: ()=> null,
+          gestureEnabled:false
+        }}
       />
     </SettingsStack.Navigator>
   );

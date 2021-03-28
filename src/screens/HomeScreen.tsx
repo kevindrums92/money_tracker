@@ -36,12 +36,12 @@ export default function HomeScreen() {
       <ScrollView style={styles.scrollView} alwaysBounceVertical={false} keyboardShouldPersistTaps={'never'}
       >
         <View style={styles.overview} >
-          <Overview balance={balance} income={income} expenses={expenses}/>
+          <Overview balance={balance} income={income} expenses={expenses} />
         </View>
         <DateSelector count={count} filters={filters} />
-        <TransactionList data={data} loading={loading} setItemtoEdit={setItemtoEdit}/>
-        <ManageTransactionModal modalVisible={itemtoEdit !== undefined} setModalVisible={(value: boolean)=>{
-          if(!value) setItemtoEdit(undefined);
+        <TransactionList data={data} loading={loading} setItemtoEdit={setItemtoEdit} />
+        <ManageTransactionModal modalVisible={itemtoEdit !== undefined} setModalVisible={(value: boolean) => {
+          if (!value) setItemtoEdit(undefined);
         }} item={itemtoEdit} />
       </ScrollView>
     </View>

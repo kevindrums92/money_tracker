@@ -16,7 +16,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
   const { settings } = useSelector<RootState, SettingsSlice>((state) => state.settings);
-  
+
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
@@ -32,8 +32,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator({ initialRoute }: any) {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
-      <Stack.Screen name="SettingUp" component={SettingUp} />
+    <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled:false }} initialRouteName={initialRoute}>
+      <Stack.Screen name="SettingUp" component={SettingUp}/>
       <Stack.Screen name="Root" component={BottomTabNavigator} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>

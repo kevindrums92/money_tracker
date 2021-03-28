@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { initDB } from '../database/connector';
-import { getBudgetsDB, getSettingsDB, insertBudgetDB, insertSettingsDB } from '../database/settings';
+import { getBudgetsDB, getSettingsDB, insertBudgetDB, insertSettingsDB, updateBudgetDB, updateSettingsDB } from '../database/settings';
 import { Budget, Settings } from '../types/Settings';
 import { setInitialFilters } from './transactions';
 
@@ -9,13 +9,15 @@ export interface SettingsSlice {
     step: number;
     loading: boolean;
     budgetInserted: number;
+    notifyUpdate:boolean;
 }
 
 const initialState: SettingsSlice = {
     settings: undefined,
     step: 1,
     loading: true,
-    budgetInserted: 0
+    budgetInserted: 0,
+    notifyUpdate:false,
 }
 
 // Slice
@@ -34,13 +36,16 @@ const slice = createSlice({
         }),
         setSettings: (state, action: PayloadAction<Settings>) => ({
             ...state, settings: action.payload
-        })
+        }),
+        setNotifyUpdate: (state, action: PayloadAction<boolean>) => ({
+            ...state, notifyUpdate: action.payload
+        }),
     },
 });
 export default slice.reducer;
 
 // Action
-const { setStep, setLoading, setBudgetInserted, setSettings } = slice.actions;
+const { setStep, setLoading, setBudgetInserted, setSettings, setNotifyUpdate } = slice.actions;
 
 export const getSettings = () => async (dispatch: any, getState: any) => {
     try {
@@ -61,7 +66,8 @@ export const getSettings = () => async (dispatch: any, getState: any) => {
                         Name: resSettings.Name,
                         Icon: resSettings.Icon,
                         Periodicity: resSettings.Periodicity,
-                        Startday: resSettings.Startday
+                        Startday: resSettings.Startday,
+                        Id: resSettings.SelectedBudget
                     }
                 }
                 //hago el set settings y mando a hacer la primera carga
@@ -102,10 +108,42 @@ export const submitStep2 = (item: Settings) => async (dispatch: any, getState: a
             SelectedBudget: budgetInserted,
             WelcomeComplete: true,
         };
-        const settings = await insertSettingsDB(itemToInsert);
+        await insertSettingsDB(itemToInsert);
         dispatch(getSettings());
 
     } catch (e) {
+        return console.error(e);
+    }
+}
+
+export const updateSettings = (data: any) => async (dispatch: any, getState: any) => {
+    try {
+        dispatch(setLoading(true));
+        const { settings } = getState().settings as SettingsSlice;
+        if(!settings || !settings.BudgetObj){
+            return;
+        }
+        
+        //update budget
+        const budgetToupdate: Budget = {
+            ...settings.BudgetObj,
+            Name: data.Name,
+            Periodicity: data.Periodicity,
+            Startday: data.Startday
+        }
+        await updateBudgetDB(budgetToupdate);
+        //update settings
+        
+        await updateSettingsDB(data.DailyNotifications, data.ScheduledTransactionsNotifications, settings.Id || 0);
+
+        //refresh data
+        dispatch(getSettings());
+        dispatch(setNotifyUpdate(true));
+        setTimeout(() => { dispatch(setNotifyUpdate(false)); }, 500);
+
+    } catch (e) {
+        console.log(e);
+        
         return console.error(e);
     }
 }

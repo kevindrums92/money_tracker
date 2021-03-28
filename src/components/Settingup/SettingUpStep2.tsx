@@ -52,7 +52,6 @@ const SettingUpStep2 = (props: SettingUpStep2Props) => {
                     )}
                     name="DailyNotifications"
                     control={control}
-                    rules={{ required: true }}
                     defaultValue={true}
                 />
 
@@ -81,7 +80,6 @@ const SettingUpStep2 = (props: SettingUpStep2Props) => {
                     )}
                     name="ScheduledTransactionsNotifications"
                     control={control}
-                    rules={{ required: true }}
                     defaultValue={true}
                 />
 

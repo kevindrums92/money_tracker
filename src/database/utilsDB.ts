@@ -1,4 +1,4 @@
-export const DB_NAME = 'money_maker_v21';
+export const DB_NAME = 'money_maker_v22';
 export const TABLE_TRANSACTIONS = 'SelfTransactions';
 export const TABLE_BUDGET = 'SelfBudget';
 export const TABLE_SETTINGS = 'SelfSettings';

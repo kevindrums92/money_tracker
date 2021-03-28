@@ -1,7 +1,7 @@
 import { SQLTransaction, SQLError } from "expo-sqlite";
 import { Budget, Settings } from "../types/Settings";
 import { db } from "./connector";
-import { TABLE_BUDGET, TABLE_SETTINGS, TABLE_TRANSACTIONS } from "./utilsDB";
+import { TABLE_BUDGET, TABLE_SETTINGS } from "./utilsDB";
 
 export const getSettingsDB = (): Promise<any> => {
     return new Promise((resolve, reject) => {
@@ -99,6 +99,57 @@ export const insertSettingsDB = (item: Settings): Promise<number> => {
             )
             
         `;
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql, undefined, successCallback, errorCallback
+            );
+        });
+    });
+}
+
+export const updateSettingsDB = (DailyNotifications: boolean, ScheduledTransactionsNotifications: boolean, Id:number): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        const successCallback = (transaction: SQLTransaction, result: any) => {
+            resolve(true);
+        };
+        const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
+            reject(error);
+            return true;
+        }
+
+        const sql = `
+            UPDATE ${TABLE_SETTINGS}
+            SET DailyNotifications = ${DailyNotifications === true ? 1 : 0},
+            ScheduledTransactionsNotifications = ${ScheduledTransactionsNotifications === true ? 1 : 0}
+            WHERE Id = ${Id}
+        `;
+        db.transaction((tx) => {
+            tx.executeSql(
+                sql, undefined, successCallback, errorCallback
+            );
+        });
+    });
+}
+
+export const updateBudgetDB = (item: Budget): Promise<number> => {
+    return new Promise((resolve, reject) => {
+        const successCallback = (transaction: SQLTransaction, { insertId }: any) => {
+            resolve(insertId);
+        };
+        const errorCallback = (transaction: SQLTransaction, error: SQLError) => {
+            reject(error);
+            return true;
+        }
+        
+        const sql = `
+            UPDATE ${TABLE_BUDGET}
+            SET Name = "${item.Name}", 
+            Periodicity = "${item.Periodicity}",
+            Startday = ${item.Startday}
+            WHERE Id = ${item.Id}
+            
+        `;
+        
         db.transaction((tx) => {
             tx.executeSql(
                 sql, undefined, successCallback, errorCallback

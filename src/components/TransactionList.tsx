@@ -10,6 +10,7 @@ import { getTransactionListExpenses, getTransactionListIncome } from '../utils/t
 import CustomButton from './library/CustomButton';
 import { toCamelCase } from '../utils/stringUtils';
 import { addTransactionScheduledNow } from '../store/transactions';
+import { separatorLineColor } from '../utils/appColors';
 
 
 interface TransactionListProps {
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#252525',
         marginTop: 15,
         borderBottomWidth: 1,
-        borderBottomColor: '#3f4040',
+        borderBottomColor: separatorLineColor,
         flexDirection: 'row',
     },
     sectionHeaderText: {
