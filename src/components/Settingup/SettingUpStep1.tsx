@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { submitStep1 } from '../../store/settings';
 import { Budget } from '../../types/Settings';

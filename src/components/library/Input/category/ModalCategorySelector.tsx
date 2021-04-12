@@ -28,6 +28,7 @@ const ModalCategorySelector = (props: ModalCategorySelectorProps) => {
                     {/* header */}
                     <View style={styles.containerHeader}>
                         <TouchableOpacity onPress={closeModal}>
+
                             <Ionicons style={styles.image} size={35} name="close" color={'white'} />
                         </TouchableOpacity>
                         <View style={styles.containerTitleHeader}>

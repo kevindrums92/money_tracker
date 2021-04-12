@@ -1,7 +1,7 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as React from 'react';
 import { Text, View, StyleSheet, StyleProp, TextStyle } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native';
 import { Category, CategoryGrouped, Type } from '../../../../types/category';
 import { toCamelCase } from '../../../../utils/stringUtils';
 import SeparatorLine from '../../SeparatorLine';
