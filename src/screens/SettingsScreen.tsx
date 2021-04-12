@@ -8,7 +8,7 @@ import ModalPicker from '../components/library/Input/CustomPicker/ModalPicker';
 import { Text, View } from '../components/Themed';
 import { RootState } from '../store';
 import { SettingsSlice, updateSettings } from '../store/settings';
-import { grayColor, accentColor, separatorLineColor } from '../utils/appColors';
+import { grayColor, accentColor, separatorLineColor, backgroundColor } from '../utils/appColors';
 import { getPeriodicities, getStartdayWeek, getStartdayYear, getStartdayMonth } from '../utils/globals';
 
 export default function SettingsScreen() {
@@ -207,13 +207,15 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%'
+    height: '100%',
+    backgroundColor: backgroundColor
   },
   groupContainer: {
     marginVertical: 10
   },
   form: {
     marginVertical: 0,
+    backgroundColor: backgroundColor
   },
   textFieldContainer: {
     backgroundColor: grayColor,

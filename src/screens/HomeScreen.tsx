@@ -12,6 +12,7 @@ import { View } from '../components/Themed';
 import TransactionList from '../components/TransactionList';
 import { RootState } from '../store';
 import { getTransactions, TransactionSlice } from '../store/transactions';
+import { backgroundColor } from '../utils/appColors';
 
 export default function HomeScreen() {
   const [itemtoEdit, setItemtoEdit] = React.useState(undefined);
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   scrollView: {
     marginHorizontal: 0,
     height: '100%',
-    backgroundColor: '#151515'
+    backgroundColor: backgroundColor
   },
   overview: {
     backgroundColor: 'transparent',
