@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { TextInput } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { submitStep1 } from '../../store/settings';
@@ -9,6 +9,7 @@ import { accentColor, grayColor } from '../../utils/appColors';
 import { getPeriodicities, getStartdayWeek, getStartdayYear, getStartdayMonth } from '../../utils/globals';
 import CustomButton from '../library/CustomButton';
 import ModalPicker from '../library/Input/CustomPicker/ModalPicker';
+import { Picker } from "@react-native-community/picker";
 
 interface SettingUpStep1Props { }
 
@@ -65,13 +66,26 @@ const SettingUpStep1 = (props: SettingUpStep1Props) => {
                                 }}>
                                 <Text style={styles.textFieldLabel}>PERIODICIDAD</Text>
 
-                                <View>
-                                    <Text style={styles.textInputText}>{getPeriodicities.find(i => i[1] === value)?.[0]}</Text>
-                                </View>
-                                <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
-                                    setIsPickerVisible(false);
-                                }} options={getPeriodicities} />
-
+                                {Platform.OS === 'ios' && <>
+                                    <View>
+                                        <Text style={styles.textInputText}>{getPeriodicities.find(i => i[1] === value)?.[0]}</Text>
+                                    </View>
+                                    <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
+                                        setIsPickerVisible(false);
+                                    }} options={getPeriodicities} />
+                                </>}
+                                {Platform.OS === 'android' && <Picker
+                                    style={{
+                                        color: 'white',
+                                    }}
+                                    selectedValue={value}
+                                    onValueChange={onChange}
+                                    itemStyle={{ color: "white" }}
+                                >
+                                    {getPeriodicities.map((i: any, index: any) => {
+                                        return <Picker.Item key={index} label={i[0]} value={i[1]} />;
+                                    })}
+                                </Picker>}
                             </TouchableOpacity>
                         )
                     }}
@@ -105,12 +119,27 @@ const SettingUpStep1 = (props: SettingUpStep1Props) => {
                                 }}>
                                 <Text style={styles.textFieldLabel}>DÍA DE INICIO DEl PERIODO</Text>
 
-                                <View>
-                                    <Text style={styles.textInputText}>{list.find((i: any) => i[1] === value)?.[0]}</Text>
-                                </View>
-                                <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
-                                    setIsPickerVisible(false);
-                                }} options={list} />
+                                {Platform.OS === 'ios' && <>
+                                    <View>
+                                        <Text style={styles.textInputText}>{list.find((i: any) => i[1] === value)?.[0]}</Text>
+                                    </View>
+                                    <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
+                                        setIsPickerVisible(false);
+                                    }} options={list} />
+                                </>}
+
+                                {Platform.OS === 'android' && <Picker
+                                    style={{
+                                        color: 'white',
+                                    }}
+                                    selectedValue={value}
+                                    onValueChange={onChange}
+                                    itemStyle={{ color: "white" }}
+                                >
+                                    {list.map((i: any, index: any) => {
+                                        return <Picker.Item key={index} label={i[0]} value={i[1]} />;
+                                    })}
+                                </Picker>}
 
                             </TouchableOpacity>
                         )

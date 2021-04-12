@@ -1,6 +1,7 @@
+import { Picker } from '@react-native-community/picker';
 import * as React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Alert, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, Platform, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomButton from '../components/library/CustomButton';
 import ModalPicker from '../components/library/Input/CustomPicker/ModalPicker';
@@ -82,12 +83,26 @@ export default function SettingsScreen() {
                   }}>
                   <Text style={styles.textFieldLabel}>PERIODICIDAD</Text>
 
-                  <View>
-                    <Text style={styles.textInputText}>{getPeriodicities.find(i => i[1] === value)?.[0]}</Text>
-                  </View>
-                  <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
-                    setIsPickerVisible(false);
-                  }} options={getPeriodicities} />
+                  {Platform.OS === 'ios' && <>
+                    <View>
+                      <Text style={styles.textInputText}>{getPeriodicities.find(i => i[1] === value)?.[0]}</Text>
+                    </View>
+                    <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
+                      setIsPickerVisible(false);
+                    }} options={getPeriodicities} />
+                  </>}
+                  {Platform.OS === 'android' && <Picker
+                    style={{
+                      color: 'white',
+                    }}
+                    selectedValue={value}
+                    onValueChange={onChange}
+                    itemStyle={{ color: "white" }}
+                  >
+                    {getPeriodicities.map((i: any, index: any) => {
+                      return <Picker.Item key={index} label={i[0]} value={i[1]} />;
+                    })}
+                  </Picker>}
 
                 </TouchableOpacity>
               )
@@ -122,12 +137,27 @@ export default function SettingsScreen() {
                   }}>
                   <Text style={styles.textFieldLabel}>DÍA DE INICIO DEl PERIODO</Text>
 
-                  <View>
-                    <Text style={styles.textInputText}>{list.find((i: any) => i[1] === value)?.[0]}</Text>
-                  </View>
-                  <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
-                    setIsPickerVisible(false);
-                  }} options={list} />
+                  {Platform.OS === 'ios' && <>
+                    <View>
+                      <Text style={styles.textInputText}>{list.find((i: any) => i[1] === value)?.[0]}</Text>
+                    </View>
+                    <ModalPicker value={value} onChange={onChange} modalVisible={isPickerVisible} closeControl={() => {
+                      setIsPickerVisible(false);
+                    }} options={list} />
+                  </>}
+
+                  {Platform.OS === 'android' && <Picker
+                    style={{
+                      color: 'white',
+                    }}
+                    selectedValue={value}
+                    onValueChange={onChange}
+                    itemStyle={{ color: "white" }}
+                  >
+                    {list.map((i: any, index: any) => {
+                      return <Picker.Item key={index} label={i[0]} value={i[1]} />;
+                    })}
+                  </Picker>}
 
                 </TouchableOpacity>
               )
@@ -151,7 +181,7 @@ export default function SettingsScreen() {
                   flexDirection: 'row',
                   backgroundColor: grayColor
                 }}>
-                  <Text style={{ ...styles.textInputText, flex: 5, fontSize: 12 }}>Te recordaremos diaríamente de agregar tus registros</Text>
+                  <Text style={{ ...styles.textInputText, flex: 5, fontSize: 14 }}>Te recordaremos diaríamente de agregar tus registros</Text>
                   <Switch
                     style={{
                       alignSelf: 'center',
@@ -180,7 +210,7 @@ export default function SettingsScreen() {
                   flexDirection: 'row',
                   backgroundColor: grayColor
                 }}>
-                  <Text style={{ ...styles.textInputText, flex: 5, fontSize: 12 }}>Te avisaremos cuando un registro agendado sea agregado</Text>
+                  <Text style={{ ...styles.textInputText, flex: 5, fontSize: 14 }}>Te avisaremos cuando un registro agendado sea agregado</Text>
                   <Switch
                     style={{
                       alignSelf: 'center',
