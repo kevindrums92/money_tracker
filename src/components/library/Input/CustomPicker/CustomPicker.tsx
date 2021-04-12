@@ -2,11 +2,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { getRecurrencyTypes } from '../../../../utils/transactionUtils';
 import { customInputStyles } from '../Styles';
 import ModalPicker from './ModalPicker';
-
+import { Picker } from "@react-native-community/picker";
 interface CustomPickerProps {
     onChange: (...event: any[]) => void;
     value: any;
@@ -52,21 +52,51 @@ const CustomPicker = (props: CustomPickerProps) => {
     }
 
     return (
-        <TouchableOpacity style={customInputStyles.container}
+        <TouchableOpacity style={{...customInputStyles.container, paddingVertical:10}}
             onPress={() => {
                 setIsPickerVisible(true);
             }}>
-            <View style={customInputStyles.inputContainer}>
+           {Platform.OS === 'ios' && <View style={customInputStyles.inputContainer}>
                 <View style={{ ...customInputStyles.imageContainer }}>
                     <MaterialIcons style={customInputStyles.image} name="repeat" size={35} color={"white"} />
                 </View>
                 <View style={customInputStyles.textInput}>
                     <Text style={textInputTextStyle}>{`${textValue}${getRecurrencyComplement()}`}</Text>
                 </View>
+                 
                 <ModalPicker {...props} modalVisible={isPickerVisible} closeControl={() => {
                     setIsPickerVisible(false);
                 }} options={getRecurrencyTypes}/>
-            </View>
+                 
+            </View>}
+            {Platform.OS === 'android' && <View style={{flexDirection:'row'}}>
+                <View style={{
+                    width: 30,
+                    height: 30,
+                    marginRight: 10,
+                }}>
+                    <MaterialIcons style={{
+                        justifyContent: 'center',
+                        alignSelf: 'center',
+                        marginLeft: 0,
+                    }} name="repeat" size={35} color={"white"} />
+                </View>
+                <Picker
+                    style={{
+                        color: 'white',
+                        fontSize: 14,
+                        flex:1,
+                    }}
+                    selectedValue={value}
+                    onValueChange={props.onChange}
+                    itemStyle={{ color: "white" }}
+                >
+                    {getRecurrencyTypes.map((i: any, index: any) => {
+                        return <Picker.Item key={index} label={i[0]} value={i[1]} />;
+                    })}
+                </Picker>
+            </View>}
+
         </TouchableOpacity>
 
     );

@@ -29,6 +29,6 @@ export const customInputStyles = StyleSheet.create({
     textInputText: {
         color: 'white',
         fontSize: 16,
-
+        marginLeft: 10
     }
 });
